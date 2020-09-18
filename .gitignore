@@ -1,0 +1,9 @@
+.Rproj.user/
+.RData
+.o
+.dll
+*.o
+R/RcppExports.R
+src/RcppExports.cpp
+.Rhistory
+src/Rbackend.dll
