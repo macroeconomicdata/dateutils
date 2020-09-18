@@ -1,0 +1,108 @@
+library(tidyverse)
+
+# We'll begin with a few simple examples form the vignette before moving to our own data.
+# If you'd like to explore more on your own run:
+# vignette("dplyr")
+sw <- starwars #built in data set
+
+# The pipe, %>% allows us to perform multiple opperations at the same time
+# without storing intermediate objects:
+
+# Select brown eyed humans, keep only name, height, and mass, and arrange in decending
+# order by height
+
+sbst <- sw %>% filter(eye_color == "brown", species == "Human") %>% select(name, height, mass) %>%
+  arrange(desc(height))
+
+#Select can be used with helper functions: starts_with(), ends_with(), matches(), contains()
+
+# We can select rows with slice():
+
+sw %>% slice(10:15) # rows 10:15
+sw %>% slice_head(n=5) # first 5 rows
+sw %>% slice_tail(n=5) # last 5 rows
+
+# find the min or max of a column:
+sw %>%
+  filter(!is.na(height)) %>%
+  slice_max(height, n = 3)
+
+# or
+sw %>%
+  filter(!is.na(height)) %>%
+  slice_min(height, n = 3)
+
+# mutate() is similar to := in data.table. For example:
+sw2 <- sw %>% mutate(log_height = log(height)) %>%
+  select(name, height, mass, log_height)
+
+# group_by works like by = .() in data.table. For example
+sw %>%
+  group_by(sex) %>%
+  summarise(
+    height = mean(height, na.rm = TRUE),
+    mass = mean(mass, na.rm = TRUE)
+  )
+
+#Note that we are using other packages here: tidyr and readr
+
+df_long <- read_csv("~/BankOfAlbania/data/dt_long.csv")
+
+ip <- df_long %>% filter(series_name == "industrial production")
+
+# or
+
+ip <- df_long %>%
+  filter(series_name == "industrial production") %>%
+  select(ref_date, value)
+
+# or
+
+ip <- df_long %>%
+  filter(series_name == "industrial production", ref_date >= as.Date("2016-06-01")) %>%
+  select(ref_date, value)
+
+# get the mean exchange rate:
+df_long %>%
+  filter(series_name == "exchange rate") %>%
+  summarise(ex_rate = mean(value))
+
+# Monthly exchange rate
+
+er <- df_long %>%
+  filter(series_name == "exchange rate") %>%
+  mutate(month = format(ref_date, "%m"), year = format(ref_date, "%Y")) %>%
+  group_by(year, month) %>%
+  summarise(value = mean(value), ref_date = max(ref_date))
+
+# To do things right we should use the dateutils package to format "ref_date"
+# to the end of the month. For example, to make the whole dataset quarterly:
+
+df_quarter <- df_long %>%
+  mutate(quarter = end_of_quarter(ref_date)) %>%
+  group_by(series_name, quarter) %>%
+  summarise(value = mean(value, na.rm = TRUE))
+
+# Easy! We can transorm this to wide format using tidyr:
+
+df_wide <- pivot_wider(df_quarter, names_from = series_name, values_from = value)
+
+# And back to long, using dplyr speak:
+
+df_long2 <- df_wide %>%
+  pivot_longer(-quarter, names_to = "series_name", values_to = "value") %>%
+  arrange(series_name, quarter) #sort by series name and then quarter
+
+
+
+
+
+
+
+
+
+
+
+
+
+

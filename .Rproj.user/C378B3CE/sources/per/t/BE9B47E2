@@ -1,0 +1,25 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1597004653337.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "3690048720",
+    "id" : "BE9B47E2",
+    "lastKnownWriteTime" : 1597005844,
+    "last_content_update" : 1597005844394,
+    "path" : "~/BankOfAlbania/scripts/day_4/dplyr_intro.R",
+    "project_path" : null,
+    "properties" : {
+        "cursorPosition" : "93,69",
+        "scrollLine" : "81"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}
