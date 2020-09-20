@@ -7,3 +7,7 @@ R/RcppExports.R
 src/RcppExports.cpp
 .Rhistory
 src/Rbackend.dll
+*.Rproj
+*.dll
+src-i386/
+src-x64/
