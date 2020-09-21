@@ -3,9 +3,7 @@
 .o
 .dll
 *.o
-src/RcppExports.cpp
 .Rhistory
-src/Rbackend.dll
 *.Rproj
 *.dll
 src-i386/
