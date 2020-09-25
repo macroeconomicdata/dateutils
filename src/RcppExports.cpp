@@ -6,6 +6,20 @@
 
 using namespace Rcpp;
 
+// long_run_var
+arma::mat long_run_var(arma::mat A, arma::mat Q, arma::uword m, arma::uword p);
+RcppExport SEXP _dateutils_long_run_var(SEXP ASEXP, SEXP QSEXP, SEXP mSEXP, SEXP pSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::mat >::type A(ASEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type Q(QSEXP);
+    Rcpp::traits::input_parameter< arma::uword >::type m(mSEXP);
+    Rcpp::traits::input_parameter< arma::uword >::type p(pSEXP);
+    rcpp_result_gen = Rcpp::wrap(long_run_var(A, Q, m, p));
+    return rcpp_result_gen;
+END_RCPP
+}
 // Stack_Obs
 arma:: mat Stack_Obs(arma::mat nn, arma::uword p, arma::uword r);
 RcppExport SEXP _dateutils_Stack_Obs(SEXP nnSEXP, SEXP pSEXP, SEXP rSEXP) {
@@ -159,6 +173,7 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
+    {"_dateutils_long_run_var", (DL_FUNC) &_dateutils_long_run_var, 4},
     {"_dateutils_Stack_Obs", (DL_FUNC) &_dateutils_Stack_Obs, 3},
     {"_dateutils_which_date_leq", (DL_FUNC) &_dateutils_which_date_leq, 2},
     {"_dateutils_which_date_geq", (DL_FUNC) &_dateutils_which_date_geq, 2},

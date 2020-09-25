@@ -4,6 +4,33 @@
 using namespace arma;
 using namespace Rcpp;
 
+// Get initial variance for the Kalman Filter
+// [[Rcpp::export]]
+arma::mat long_run_var(arma::mat A,
+                       arma::mat Q,
+                       arma::uword m,
+                       arma::uword p){
+  uword sA = A.n_cols;
+  uword pp = sA/m;
+  uword mp = m*p;
+  double mp2 = mp*mp;
+  mat B(A(span(0,mp-1), span(0,mp-1))); mat BB; mat b;
+  mat XX(eye<mat>(mp2, mp2) - kron(B,B));
+  vec vQ(reshape(Q(span(0,m*p-1),span(0,m*p-1)), mp2, 1));
+  mat P(reshape(solve(XX, vQ), mp, mp));
+  //P = P(span(0,m-1),span(0,m-1));
+  mat PP(sA,sA,fill::zeros);
+  for(uword j = 0; j<pp; j++){
+    BB = B;
+    for(uword k=j+1; k<pp; k++){
+      b = BB*P;
+      PP(span(m*j,m*j+m-1), span(m*k,m*k+m-1)) = b(span(0,m-1),span(0,m-1));
+      BB = B*BB;
+    }
+  }
+  PP = PP + trans(PP) + kron(eye<mat>(pp,pp), P(span(0,m-1), span(0,m-1)));
+  return(PP);
+}
 
 //Stack times series data in VAR format
 // [[Rcpp::export]]
