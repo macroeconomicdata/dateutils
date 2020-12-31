@@ -14,7 +14,7 @@ Imports:
 Suggests:
   rmarkdown
 LinkingTo: Rcpp, RcppArmadillo
-RoxygenNote: 6.1.1
+RoxygenNote: 7.1.1
 LazyData: true
 Encoding: UTF-8
 VignetteBuilder: knitr
