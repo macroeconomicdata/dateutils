@@ -9,7 +9,8 @@ License: MIT
 Imports:
   Rcpp (>= 0.12.13),
   RcppArmadillo (>= 0.7.900.2.0),
-  data.table
+  data.table,
+  seasonal
 Suggests:
   rmarkdown
 LinkingTo: Rcpp, RcppArmadillo

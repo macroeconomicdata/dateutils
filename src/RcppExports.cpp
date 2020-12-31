@@ -82,12 +82,12 @@ BEGIN_RCPP
 END_RCPP
 }
 // Day
-arma::uword Day(Rcpp::Date date);
+arma::uvec Day(std::vector<Date> date);
 RcppExport SEXP _dateutils_Day(SEXP dateSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::Date >::type date(dateSEXP);
+    Rcpp::traits::input_parameter< std::vector<Date> >::type date(dateSEXP);
     rcpp_result_gen = Rcpp::wrap(Day(date));
     return rcpp_result_gen;
 END_RCPP
@@ -171,6 +171,28 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// first_of_quarter
+std::vector<Date> first_of_quarter(std::vector<Date> date);
+RcppExport SEXP _dateutils_first_of_quarter(SEXP dateSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< std::vector<Date> >::type date(dateSEXP);
+    rcpp_result_gen = Rcpp::wrap(first_of_quarter(date));
+    return rcpp_result_gen;
+END_RCPP
+}
+// end_of_year
+std::vector<Date> end_of_year(std::vector<Date> date);
+RcppExport SEXP _dateutils_end_of_year(SEXP dateSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< std::vector<Date> >::type date(dateSEXP);
+    rcpp_result_gen = Rcpp::wrap(end_of_year(date));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_dateutils_long_run_var", (DL_FUNC) &_dateutils_long_run_var, 4},
@@ -187,6 +209,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_dateutils_End_previous_Month", (DL_FUNC) &_dateutils_End_previous_Month, 1},
     {"_dateutils_End_of_Quarter", (DL_FUNC) &_dateutils_End_of_Quarter, 1},
     {"_dateutils_First_previous_Quarter", (DL_FUNC) &_dateutils_First_previous_Quarter, 1},
+    {"_dateutils_first_of_quarter", (DL_FUNC) &_dateutils_first_of_quarter, 1},
+    {"_dateutils_end_of_year", (DL_FUNC) &_dateutils_end_of_year, 1},
     {NULL, NULL, 0}
 };
 

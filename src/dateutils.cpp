@@ -125,10 +125,16 @@ arma::uvec which_date_closest_ordered(std::vector<Date> FromVec,    //for each d
   return(idx);
 }
 
+//return the last day of the year
 // [[Rcpp::export]]
-arma::uword Day(Rcpp::Date date){
-  uword out = date.getDay();
-  return(out);
+arma::uvec Day(std::vector<Date> date){
+  uvec d(date.size());
+  Rcpp::Date tmp;
+  for(uword j=0; j<date.size(); j++){
+    tmp  = date[j];
+    d[j] = tmp.getDay();
+  }
+  return(d);
 }
 
 // [[Rcpp::export]]
@@ -271,6 +277,45 @@ std::vector<Date> First_previous_Quarter(std::vector<Date> date){
       mnth = 7;
     }
     d[j] = Date(yr, mnth, 1);
+  }
+  return(d);
+}
+
+//return first day of the quarter
+// [[Rcpp::export]]
+std::vector<Date> first_of_quarter(std::vector<Date> date){
+  std::vector<Date> d(date.size());
+  Rcpp::Date tmp;
+  int yr;
+  int mnth;
+  for(uword j=0; j<date.size(); j++){
+    tmp  = date[j];
+    mnth = tmp.getMonth();
+    yr = tmp.getYear();
+    if(mnth == 1 || mnth == 2 || mnth == 3){
+      mnth = 1;
+    }else if(mnth == 4 || mnth == 5 || mnth == 6){
+      mnth = 4;
+    }else if(mnth == 7 || mnth == 8 || mnth == 9){
+      mnth = 7;
+    }else if(mnth == 10 || mnth == 11 || mnth == 12){
+      mnth = 10;
+    }
+    d[j] = Date(yr, mnth, 1);
+  }
+  return(d);
+}
+
+//return the last day of the year
+// [[Rcpp::export]]
+std::vector<Date> end_of_year(std::vector<Date> date){
+  std::vector<Date> d(date.size());
+  Rcpp::Date tmp;
+  int yr;
+  for(uword j=0; j<date.size(); j++){
+    tmp  = date[j];
+    yr = tmp.getYear();
+    d[j] = Date(yr, 12, 31);
   }
   return(d);
 }

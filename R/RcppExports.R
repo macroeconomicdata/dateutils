@@ -57,3 +57,11 @@ First_previous_Quarter <- function(date) {
     .Call('_dateutils_First_previous_Quarter', PACKAGE = 'dateutils', date)
 }
 
+first_of_quarter <- function(date) {
+    .Call('_dateutils_first_of_quarter', PACKAGE = 'dateutils', date)
+}
+
+end_of_year <- function(date) {
+    .Call('_dateutils_end_of_year', PACKAGE = 'dateutils', date)
+}
+
