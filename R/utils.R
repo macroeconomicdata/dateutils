@@ -1,9 +1,18 @@
 #library(data.table)
 
-pct_chng <- function(y){
+last_obs <- function(x){
+  idx <- which(is.finite(x))
+  if(length(idx) == 0){
+    return(NA)
+  }else{
+    return(x[max(idx)])
+  }
+} 
+
+pct_chng <- function(y, lags = 1){
   y <- as.matrix(y)
-  y <- (y[-1, ,drop = FALSE] - y[-NROW(y), ,drop = FALSE])/y[-NROW(y), ,drop = FALSE]
-  y <- rbind(matrix(NA, 1, NCOL(y)), y) # keep the number of rows the same
+  y <- (y[-seq(lags), ,drop = FALSE] - y[-seq(NROW(y)-lags+1, NROW(y)), ,drop = FALSE])/y[-seq(NROW(y)-lags+1, NROW(y)), ,drop = FALSE]
+  y <- rbind(matrix(NA, lags, NCOL(y)), y) # keep the number of rows the same
   return(y)
 }
 
@@ -152,13 +161,17 @@ cummean <- function(x, n_obs){
   }
 }
 
-count_obs <- function(x){
-  if(all(!is.finite(x))){
-    return(as.integer(NA))
-  }else{
-    return(as.integer(sum(is.finite(x))))
-  }
-}
+
+count_obs <- function(x) as.integer(sum(is.finite(x)))
+   
+
+# count_obs <- function(x){
+#   if(all(!is.finite(x))){
+#     return(as.integer(NA))
+#   }else{
+#     return(as.integer(sum(is.finite(x))))
+#   }
+# }
 
 cummean_fill <- function(x, dates, frq = "month"){
   X <- data.table("ref_date" = dates, "value" = x)

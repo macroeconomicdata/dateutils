@@ -54,7 +54,7 @@ first_previous_quarter <- function(date) First_previous_Quarter(date)
 #' Return the day of a Date value as an integer
 #' 
 #' @param date date value formated as.Date()
-day <- function(date) Day(date)
+day <- function(date) c(Day(date))
 
 #' Stack time series observations in VAR format
 #'
