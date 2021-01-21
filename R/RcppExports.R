@@ -25,8 +25,8 @@ which_date_closest_ordered <- function(FromVec, IndVec) {
     .Call('_dateutils_which_date_closest_ordered', PACKAGE = 'dateutils', FromVec, IndVec)
 }
 
-Day <- function(date) {
-    .Call('_dateutils_Day', PACKAGE = 'dateutils', date)
+Day <- function(dte) {
+    .Call('_dateutils_Day', PACKAGE = 'dateutils', dte)
 }
 
 replace_day <- function(date, new_day) {

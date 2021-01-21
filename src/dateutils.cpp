@@ -127,12 +127,14 @@ arma::uvec which_date_closest_ordered(std::vector<Date> FromVec,    //for each d
 
 //return the last day of the year
 // [[Rcpp::export]]
-arma::uvec Day(std::vector<Date> date){
-  uvec d(date.size());
+arma::uvec Day(std::vector<Date> dte){
+  uvec d(dte.size());
   Rcpp::Date tmp;
-  for(uword j=0; j<date.size(); j++){
-    tmp  = date[j];
-    d[j] = tmp.getDay();
+  uword dd;
+  for(uword j=0; j<dte.size(); j++){
+    tmp  = dte[j];
+    dd = tmp.getDay();
+    d[j] = dd;
   }
   return(d);
 }

@@ -43,6 +43,8 @@ index_by_friday <- function(dates){
 
 mean_na <- function(x) if(all(!is.finite(x))) return(as.double(NA)) else return(as.double(mean(x, na.rm = T)))
 
+
+
 agg_to_freq <- function(dt_long, date_name = "ref_date",
                          id_name = "series_name", value_name = "value",
                          frq = "month"){
@@ -56,40 +58,56 @@ agg_to_freq <- function(dt_long, date_name = "ref_date",
   if(frq == "week"){
     dt_out <- dt_long[ , mean_na(value),
                        by = .(series_name, index_by_friday(ref_date))]
+    nobs_out <- dt_long[ , sum(is.finite(value)),
+                      by = .(series_name, index_by_friday(ref_date))]
     setnames(dt_out, "V1", "value")
     setnames(dt_out, "index_by_friday", "ref_date")
-    dt_out <- merge(data.table("ref_date" = seq.Date(from = min(dt_out$ref_date), to = max(dt_out$ref_date), by = 7)),
-                    dt_out, all = TRUE) # regularize frequency
+    setnames(nobs_out, "V1", "n_obs")
+    setnames(nobs_out, "index_by_friday", "ref_date")
+    dt_out <- merge(dt_out, nobs_out, by = c("ref_date", "series_name"))
   }else if(frq == "month"){
     dt_out <- dt_long[ , mean_na(value),
                        by = .(series_name, end_of_month(ref_date))]
+    nobs_out <- dt_long[ , sum(is.finite(value)),
+                       by = .(series_name, end_of_month(ref_date))]
     setnames(dt_out, "V1", "value")
     setnames(dt_out, "end_of_month", "ref_date")
-    tmp_dt <- data.table("ref_date" = end_of_month(seq.Date(from = first_of_month(min(dt_out$ref_date)),
-                                               to = first_of_month(max(dt_out$ref_date)), by = "month")))
-    dt_out <- merge(tmp_dt, dt_out, all = TRUE) # regularize frequency
+    setnames(nobs_out, "V1", "n_obs")
+    setnames(nobs_out, "end_of_month", "ref_date")
+    dt_out <- merge(dt_out, nobs_out, by = c("ref_date", "series_name"))
   }else if(frq == "quarter"){
     dt_out <- dt_long[ , mean_na(value),
                        by = .(series_name, end_of_quarter(ref_date))]
+    dt_out <- dt_long[ , sum(is.finite(value)),
+                       by = .(series_name, end_of_quarter(ref_date))]
     setnames(dt_out, "V1", "value")
     setnames(dt_out, "end_of_quarter", "ref_date")
-    tmp_dt <- data.table("ref_date" = end_of_quarter(seq.Date(from = first_of_month(min(dt_out$ref_date)),
-                                                            to = first_of_month(max(dt_out$ref_date)), by = "quarter")))
-    dt_out <- merge(tmp_dt, dt_out, all = TRUE) # regularize frequency
+    setnames(dt_out, "V1", "n_obs")
+    setnames(dt_out, "end_of_quarter", "ref_date")
+    dt_out <- merge(dt_out, nobs_out, by = c("ref_date", "series_name"))
   }else if(frq == "year"){
     dt_out <- dt_long[ , mean_na(value),
                        by = .(series_name, end_of_year(ref_date))]
+    nobs_out <- dt_long[ , sum(is.finite(value)),
+                       by = .(series_name, end_of_year(ref_date))]
     setnames(dt_out, "V1", "value")
     setnames(dt_out, "end_of_year", "ref_date")
-    tmp_dt <- data.table("ref_date" = seq.Date(from = min(dt_out$ref_date),
-                                               to = max(dt_out$ref_date), by = "year"))
-    dt_out <- merge(tmp_dt, dt_out, all = TRUE) # regularize frequency
+    setnames(dt_out, "V1", "n_obs")
+    setnames(dt_out, "end_of_year", "ref_date")
+    dt_out <- merge(dt_out, nobs_out, by = c("ref_date", "series_name"))
   }else{
     stop("'frq' must be one of 'week', 'month', 'quarter', or 'year'")
   }
+  dt_out <- dt_out[n_obs >= 1] #drop missing obs in long format
+  dt_out <- dt_out[order(series_name, ref_date)]
   if(is.null(id_name)) dt_out[ , series_name := NULL]
   return(dt_out)
 }
+
+
+
+
+
 
 add_forecast_dates <- function(dt, horizon = 1, date_name = "ref_date", frq = "month"){
   setnames(dt, date_name, "ref_date")
@@ -243,12 +261,34 @@ diff_na <- function(x){
   return(x)
 }
 
-agg_to_freq_wide <- function(dt, date_name = "ref_date", frq = "month"){
+agg_to_freq_wide <- function(dt, date_name = "ref_date", id_name = "series_name",
+                             value_name = "value", frq = "month", dt_is_wide = FALSE){
+  if(!frq%in%c("week", "month", "quarter", "year")) stop("'frq' must be one of 'week', 'month', 'quarter', or 'year'")
   setnames(dt, date_name, "ref_date")
-  dt_long <- melt(dt, id.vars = 'ref_date', variable.name = "series_name", na.rm = TRUE)
-  dt_long <- agg_to_freq(dt_long, frq = "week")
-  dt <- dcast(dt_long, ref_date ~ series_name, value.var = "value", fun.aggregate = mean_na)
-  return(dt)
+  setnames(dt, id_name, "series_name")
+  setnames(dt, value_name, "value")
+  if(dt_is_wide){
+    dt <- melt(dt, id.vars = 'ref_date', variable.name = "series_name", na.rm = TRUE)
+  }
+  dt <- agg_to_freq(dt, frq = frq)
+  n_obs <- dcast(dt, ref_date ~ series_name, value.var = "n_obs", fun.aggregate = mean_na)
+  dt <- dcast(dt, ref_date ~ series_name, value.var = "value", fun.aggregate = mean_na)
+  if(frq == "week"){
+    tmp_dt <- data.table("ref_date" = seq.Date(from = min(dt$ref_date), to = max(dt$ref_date), by = 7))# regularize frequency
+  }else if(frq == "month"){
+    tmp_dt <- data.table("ref_date" = end_of_month(seq.Date(from = first_of_month(min(dt$ref_date)),
+                                                            to = first_of_month(max(dt$ref_date)), by = "month")))
+  }else if(frq == "quarter"){
+    tmp_dt <- data.table("ref_date" = end_of_quarter(seq.Date(from = first_of_month(min(dt$ref_date)),
+                                                              to = first_of_month(max(dt$ref_date)), by = "quarter")))
+  }else if(frq == "year"){
+    tmp_dt <- data.table("ref_date" = seq.Date(from = min(dt$ref_date),
+                                               to = max(dt$ref_date), by = "year"))
+  }
+  dt <- merge(tmp_dt, dt, by = "ref_date", all = TRUE) # regularize frequency
+  n_obs <- merge(tmp_dt, n_obs, by = "ref_date", all = TRUE) # regularize frequency
+  return(list(dt = dt,
+              n_obs = n_obs))
 }
 
 format_weekly <- function(dt, date_name = "ref_date"){

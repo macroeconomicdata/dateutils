@@ -82,13 +82,13 @@ BEGIN_RCPP
 END_RCPP
 }
 // Day
-arma::uvec Day(std::vector<Date> date);
-RcppExport SEXP _dateutils_Day(SEXP dateSEXP) {
+arma::uvec Day(std::vector<Date> dte);
+RcppExport SEXP _dateutils_Day(SEXP dteSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< std::vector<Date> >::type date(dateSEXP);
-    rcpp_result_gen = Rcpp::wrap(Day(date));
+    Rcpp::traits::input_parameter< std::vector<Date> >::type dte(dteSEXP);
+    rcpp_result_gen = Rcpp::wrap(Day(dte));
     return rcpp_result_gen;
 END_RCPP
 }
