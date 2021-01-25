@@ -6,6 +6,17 @@
 
 using namespace Rcpp;
 
+// comp_form
+arma::mat comp_form(arma::mat B);
+RcppExport SEXP _dateutils_comp_form(SEXP BSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::mat >::type B(BSEXP);
+    rcpp_result_gen = Rcpp::wrap(comp_form(B));
+    return rcpp_result_gen;
+END_RCPP
+}
 // long_run_var
 arma::mat long_run_var(arma::mat A, arma::mat Q, arma::uword m, arma::uword p);
 RcppExport SEXP _dateutils_long_run_var(SEXP ASEXP, SEXP QSEXP, SEXP mSEXP, SEXP pSEXP) {
@@ -195,6 +206,7 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
+    {"_dateutils_comp_form", (DL_FUNC) &_dateutils_comp_form, 1},
     {"_dateutils_long_run_var", (DL_FUNC) &_dateutils_long_run_var, 4},
     {"_dateutils_Stack_Obs", (DL_FUNC) &_dateutils_Stack_Obs, 3},
     {"_dateutils_which_date_leq", (DL_FUNC) &_dateutils_which_date_leq, 2},

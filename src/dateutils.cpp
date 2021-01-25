@@ -4,6 +4,15 @@
 using namespace arma;
 using namespace Rcpp;
 
+//Create the companion form of the transition matrix B
+// [[Rcpp::export]]
+arma::mat comp_form(arma::mat B){
+  uword r = B.n_rows;
+  uword c = B.n_cols;
+  mat A   = join_vert(B, join_horiz(eye<mat>(c-r,c-r), zeros<mat>(c-r,r)));
+  return(A);
+}
+
 // Get initial variance for the Kalman Filter
 // [[Rcpp::export]]
 arma::mat long_run_var(arma::mat A,
