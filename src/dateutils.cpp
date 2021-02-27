@@ -41,6 +41,20 @@ arma::mat long_run_var(arma::mat A,
   return(PP);
 }
 
+// [[Rcpp::export]]
+arma::uvec finite_cols(arma::mat X){
+  uword T = X.n_cols;
+  vec x;
+  uvec rtrn = regspace<uvec>(0,T-1);
+  for(uword j=T; j!=0; j--){
+    x = X.col(j-1);
+    if(!x.is_finite()){
+      rtrn.shed_row(j-1);
+    }
+  }
+  return(rtrn);
+}
+
 //Stack times series data in VAR format
 // [[Rcpp::export]]
 arma:: mat Stack_Obs(arma::mat nn, arma::uword p, arma::uword r = 0){

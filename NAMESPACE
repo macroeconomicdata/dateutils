@@ -48,6 +48,8 @@ export(try_detrend)
 export(spline_fill_trend)
 export(which_date_closest_ordered)
 export(comp_form)
+export(any_finite)
+export(all_finite)
 
 import(data.table)
 importFrom(Rcpp,evalCpp)

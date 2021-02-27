@@ -31,6 +31,17 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// finite_cols
+arma::uvec finite_cols(arma::mat X);
+RcppExport SEXP _dateutils_finite_cols(SEXP XSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::mat >::type X(XSEXP);
+    rcpp_result_gen = Rcpp::wrap(finite_cols(X));
+    return rcpp_result_gen;
+END_RCPP
+}
 // Stack_Obs
 arma:: mat Stack_Obs(arma::mat nn, arma::uword p, arma::uword r);
 RcppExport SEXP _dateutils_Stack_Obs(SEXP nnSEXP, SEXP pSEXP, SEXP rSEXP) {
@@ -208,6 +219,7 @@ END_RCPP
 static const R_CallMethodDef CallEntries[] = {
     {"_dateutils_comp_form", (DL_FUNC) &_dateutils_comp_form, 1},
     {"_dateutils_long_run_var", (DL_FUNC) &_dateutils_long_run_var, 4},
+    {"_dateutils_finite_cols", (DL_FUNC) &_dateutils_finite_cols, 1},
     {"_dateutils_Stack_Obs", (DL_FUNC) &_dateutils_Stack_Obs, 3},
     {"_dateutils_which_date_leq", (DL_FUNC) &_dateutils_which_date_leq, 2},
     {"_dateutils_which_date_geq", (DL_FUNC) &_dateutils_which_date_geq, 2},

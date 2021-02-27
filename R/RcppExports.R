@@ -9,6 +9,10 @@ long_run_var <- function(A, Q, m, p) {
     .Call('_dateutils_long_run_var', PACKAGE = 'dateutils', A, Q, m, p)
 }
 
+finite_cols <- function(X) {
+    .Call('_dateutils_finite_cols', PACKAGE = 'dateutils', X)
+}
+
 Stack_Obs <- function(nn, p, r = 0L) {
     .Call('_dateutils_Stack_Obs', PACKAGE = 'dateutils', nn, p, r)
 }

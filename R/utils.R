@@ -1,5 +1,8 @@
 #library(data.table)
 
+any_finite <- function(Y) seq(NROW(Y))%in%(any_obs_cols(t(as.matrix(Y)))+1)
+all_finite <- function(Y) seq(NROW(Y))%in%(finite_cols(t(as.matrix(Y)))+1)
+
 last_obs <- function(x){
   idx <- which(is.finite(x))
   if(length(idx) == 0){
@@ -78,12 +81,12 @@ agg_to_freq <- function(dt_long, date_name = "ref_date",
   }else if(frq == "quarter"){
     dt_out <- dt_long[ , mean_na(value),
                        by = .(series_name, end_of_quarter(ref_date))]
-    dt_out <- dt_long[ , sum(is.finite(value)),
+    nobs_out <- dt_long[ , sum(is.finite(value)),
                        by = .(series_name, end_of_quarter(ref_date))]
     setnames(dt_out, "V1", "value")
     setnames(dt_out, "end_of_quarter", "ref_date")
-    setnames(dt_out, "V1", "n_obs")
-    setnames(dt_out, "end_of_quarter", "ref_date")
+    setnames(nobs_out, "V1", "n_obs")
+    setnames(nobs_out, "end_of_quarter", "ref_date")
     dt_out <- merge(dt_out, nobs_out, by = c("ref_date", "series_name"))
   }else if(frq == "year"){
     dt_out <- dt_long[ , mean_na(value),
@@ -92,8 +95,8 @@ agg_to_freq <- function(dt_long, date_name = "ref_date",
                        by = .(series_name, end_of_year(ref_date))]
     setnames(dt_out, "V1", "value")
     setnames(dt_out, "end_of_year", "ref_date")
-    setnames(dt_out, "V1", "n_obs")
-    setnames(dt_out, "end_of_year", "ref_date")
+    setnames(nobs_out, "V1", "n_obs")
+    setnames(nobs_out, "end_of_year", "ref_date")
     dt_out <- merge(dt_out, nobs_out, by = c("ref_date", "series_name"))
   }else{
     stop("'frq' must be one of 'week', 'month', 'quarter', or 'year'")
