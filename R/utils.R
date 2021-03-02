@@ -109,9 +109,6 @@ agg_to_freq <- function(dt_long, date_name = "ref_date",
 
 
 
-
-
-
 add_forecast_dates <- function(dt, horizon = 1, date_name = "ref_date", frq = "month"){
   setnames(dt, date_name, "ref_date")
   if(frq == "day"){

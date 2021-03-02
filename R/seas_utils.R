@@ -136,7 +136,7 @@ fill_trend_tail <- function(x){
   if(n==0) return(x)
   d1 <- x[idx] - x[idx-1]
   d2 <- d1 - (x[idx-1] - x[idx-2])
-  D2 <- -sign(d1)*(cumsum(rep(abs(d2),n)) + rep(1/n,n))
+  D2 <- -sign(d1)*(cumsum(rep(abs(d2),n)) + rep(abs(d1)*10/length(x),n))
   D1 <- rep(d1,n) + D2
   D1[sign(D1)!=sign(d1)] <- 0
   x[seq(idx+1,length(x))] <- x[idx] + cumsum(D1)
