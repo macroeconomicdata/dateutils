@@ -8,7 +8,7 @@ to_ts <- function(x, dates){
   frq <- diff(dates) #measured in days
   if(all(frq >= 27 & frq <= 35)){
     x <- ts(x, start = c(year(dates[1]), month(dates[1])), frequency = 12)
-  }else if(all(frq >= 89 & frq <= 94)){
+  }else if(all(frq >= 88 & frq <= 94)){
     x <- ts(x, start = c(year(dates[1]), quarter(dates[1])), frequency = 4)
   }else{
     stop("Data must be either monthly or quarterly, and cannot have internal missing values")
@@ -87,10 +87,6 @@ try_sa <- function(x, dates, x11 = FALSE, series_name = NULL){
   }
 }
 
-get_from_list <- function(out, what){
-  return(out[[what]])
-}
-
 seas_df_wide <- function(df, sa_cols){
   sa_list <- lapply(df[ , sa_cols, with = FALSE],  FUN = try_sa, dates = df$ref_date)
   values_sa <- data.frame(ref_date = df$ref_date,
@@ -153,13 +149,13 @@ spline_fill_trend <- function(x){
   return(x)
 }
 
-try_trend <- function(x, outlier_rm = TRUE){
-  trend <- try(loess(x ~ seq(length(x)), na.action = na.exclude, span = .6))
+try_trend <- function(x, outlier_rm = TRUE, span = 0.6){
+  trend <- try(loess(x ~ seq(length(x)), na.action = na.exclude, span = span))
   if(inherits(trend, "try-error")) return(rep(0,length(x)))
   trend <- predict(trend)
   vnce <- mean((x-trend)^2, na.rm = T)
   x[abs(x-trend) > 3*sqrt(vnce)] <- NA
-  trend <- try(loess(x ~ seq(length(x)), na.action = na.exclude, span = .6))
+  trend <- try(loess(x ~ seq(length(x)), na.action = na.exclude, span = span))
   if(inherits(trend, "try-error")){
     return(rep(0,length(x)))
   }else{
@@ -167,14 +163,14 @@ try_trend <- function(x, outlier_rm = TRUE){
   } 
 }
 
-try_detrend <- function(x, outlier_rm = TRUE){
+try_detrend <- function(x, outlier_rm = TRUE, span = 0.6){
   x_in <- x
-  trend <- try(loess(x ~ seq(length(x)), na.action = na.exclude, span = .6))
+  trend <- try(loess(x ~ seq(length(x)), na.action = na.exclude, span = span))
   if(inherits(trend, "try-error")) return(x)
   trend <- predict(trend)
   vnce <- mean((x-trend)^2, na.rm = T)
   x[abs(x-trend) > 3*sqrt(vnce)] <- NA
-  trend <- try(loess(x ~ seq(length(x)), na.action = na.exclude, span = .6))
+  trend <- try(loess(x ~ seq(length(x)), na.action = na.exclude, span = span))
   if(inherits(trend, "try-error")){
     return(x)
   }else{

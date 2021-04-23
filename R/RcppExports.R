@@ -13,6 +13,10 @@ finite_cols <- function(X) {
     .Call('_dateutils_finite_cols', PACKAGE = 'dateutils', X)
 }
 
+count_finite <- function(X) {
+    .Call('_dateutils_count_finite', PACKAGE = 'dateutils', X)
+}
+
 Stack_Obs <- function(nn, p, r = 0L) {
     .Call('_dateutils_Stack_Obs', PACKAGE = 'dateutils', nn, p, r)
 }
@@ -63,6 +67,10 @@ End_of_Quarter <- function(date) {
 
 First_previous_Quarter <- function(date) {
     .Call('_dateutils_First_previous_Quarter', PACKAGE = 'dateutils', date)
+}
+
+End_previous_Quarter <- function(date) {
+    .Call('_dateutils_End_previous_Quarter', PACKAGE = 'dateutils', date)
 }
 
 first_of_quarter <- function(date) {

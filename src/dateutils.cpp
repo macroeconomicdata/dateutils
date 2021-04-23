@@ -55,6 +55,20 @@ arma::uvec finite_cols(arma::mat X){
   return(rtrn);
 }
 
+// [[Rcpp::export]]
+arma::uvec count_finite(arma::mat X){
+  uword T = X.n_cols;
+  vec x;
+  uvec id;
+  uvec rtrn(T, fill::zeros);
+  for(uword j=0; j<T; j++){
+    x = X.col(j-1);
+    id = find_finite(x);
+    rtrn(j) = id.n_elem;
+  }
+  return(rtrn);
+}
+
 //Stack times series data in VAR format
 // [[Rcpp::export]]
 arma:: mat Stack_Obs(arma::mat nn, arma::uword p, arma::uword r = 0){
@@ -302,6 +316,34 @@ std::vector<Date> First_previous_Quarter(std::vector<Date> date){
       mnth = 7;
     }
     d[j] = Date(yr, mnth, 1);
+  }
+  return(d);
+}
+
+//return last day for previous quarter
+// [[Rcpp::export]]
+std::vector<Date> End_previous_Quarter(std::vector<Date> date){
+  std::vector<Date> d(date.size());
+  Rcpp::Date tmp;
+  int yr;
+  int mnth;
+  int days;
+  for(uword j=0; j<date.size(); j++){
+    tmp  = date[j];
+    mnth = tmp.getMonth();
+    yr = tmp.getYear();
+    if(mnth == 1 || mnth == 2 || mnth == 3){
+      mnth = 12;
+      yr = yr-1;
+    }else if(mnth == 4 || mnth == 5 || mnth == 6){
+      mnth = 3;
+    }else if(mnth == 7 || mnth == 8 || mnth == 9){
+      mnth = 6;
+    }else if(mnth == 10 || mnth == 11 || mnth == 12){
+      mnth = 9;
+    }
+    days = MonthDays(yr, mnth);
+    d[j] = Date(yr, mnth, days);
   }
   return(d);
 }

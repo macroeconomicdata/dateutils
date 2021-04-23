@@ -2,6 +2,16 @@
 
 any_finite <- function(Y) seq(NROW(Y))%in%(any_obs_cols(t(as.matrix(Y)))+1)
 all_finite <- function(Y) seq(NROW(Y))%in%(finite_cols(t(as.matrix(Y)))+1)
+number_finite <- function(Y) seq(NROW(Y))%in%(count_finite(t(as.matrix(Y)))+1)
+
+get_from_list <- function(lst, what) lst[[what]]
+row_to_list <- function(Y) split(Y, row(Y))
+col_to_list <- function(Y) split(Y, col(Y))
+
+fill_daily_dates <- function(DT){
+  DT <- merge(data.table("ref_date" = seq.Date(min(DT$ref_date), max(DT$ref_date), by = "day")), DT, by = "ref_date", all = TRUE)
+  return(DT)
+}
 
 last_obs <- function(x){
   idx <- which(is.finite(x))
@@ -45,6 +55,8 @@ index_by_friday <- function(dates){
 }
 
 mean_na <- function(x) if(all(!is.finite(x))) return(as.double(NA)) else return(as.double(mean(x, na.rm = T)))
+
+sum_na <- function(x) if(all(!is.finite(x))) return(as.double(NA)) else return(as.double(sum(x, na.rm = T)))
 
 
 
@@ -308,28 +320,4 @@ format_weekly <- function(dt, date_name = "ref_date"){
 allNA <- function(x) all(is.na(x))
 
 is_in <- function(that, this_in) this_in%in%that
-
-auto_pub_lag <- function(ref, pub){
-  if(all(is.na(pub))){
-    return(round(median(diff(ref), na.rm = TRUE)/2))
-  }else{
-    return(round(median(pub - ref, na.rm = TRUE)))
-  }
-}
-
-
-
-fill_pub_dates <- function(input_data){
-  #create pub_dates if missing
-  if("pub_date"%in%colnames(input_data)){
-    input_data[ , pub_date := as.Date(pub_date)]
-    input_data[pub_date == as.Date("2019-07-05"), pub_date := NA]
-    input_data[ , pub_lag := auto_pub_lag(ref_date, pub_date), by = .(country, series_name)]
-    input_data[is.na(pub_date), pub_date := ref_date + pub_lag, by = .(country, series_name)]
-  }else{
-    input_data[ , pub_lag := round(median(diff(ref_date), na.rm = TRUE)/2), by = .(country, series_name)]
-    input_data[ , pub_date := ref_date + pub_lag, by = .(country, series_name)]
-  }
-  return(input_data)
-}
 
