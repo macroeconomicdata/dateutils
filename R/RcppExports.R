@@ -17,6 +17,10 @@ count_finite <- function(X) {
     .Call('_dateutils_count_finite', PACKAGE = 'dateutils', X)
 }
 
+any_obs_cols <- function(X) {
+    .Call('_dateutils_any_obs_cols', PACKAGE = 'dateutils', X)
+}
+
 Stack_Obs <- function(nn, p, r = 0L) {
     .Call('_dateutils_Stack_Obs', PACKAGE = 'dateutils', nn, p, r)
 }

@@ -69,6 +69,20 @@ arma::uvec count_finite(arma::mat X){
   return(rtrn);
 }
 
+// [[Rcpp::export]]
+arma::uvec any_obs_cols(arma::mat X){
+  uword T = X.n_cols;
+  uvec x;
+  uvec rtrn = regspace<uvec>(0,T-1);
+  for(uword j=T; j!=0; j--){
+    x = find_finite(X.col(j-1));
+    if(x.n_elem==0){
+      rtrn.shed_row(j-1);
+    }
+  }
+  return(rtrn);
+}
+
 //Stack times series data in VAR format
 // [[Rcpp::export]]
 arma:: mat Stack_Obs(arma::mat nn, arma::uword p, arma::uword r = 0){
