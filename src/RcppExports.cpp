@@ -248,6 +248,17 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// numdum
+arma::umat numdum(arma::vec x);
+RcppExport SEXP _dateutils_numdum(SEXP xSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::vec >::type x(xSEXP);
+    rcpp_result_gen = Rcpp::wrap(numdum(x));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_dateutils_comp_form", (DL_FUNC) &_dateutils_comp_form, 1},
@@ -271,6 +282,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_dateutils_End_previous_Quarter", (DL_FUNC) &_dateutils_End_previous_Quarter, 1},
     {"_dateutils_first_of_quarter", (DL_FUNC) &_dateutils_first_of_quarter, 1},
     {"_dateutils_end_of_year", (DL_FUNC) &_dateutils_end_of_year, 1},
+    {"_dateutils_numdum", (DL_FUNC) &_dateutils_numdum, 1},
     {NULL, NULL, 0}
 };
 

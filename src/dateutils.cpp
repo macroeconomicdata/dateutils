@@ -400,3 +400,18 @@ std::vector<Date> end_of_year(std::vector<Date> date){
   }
   return(d);
 }
+
+// [[Rcpp::export]]
+arma::umat numdum(arma::vec x){
+  vec unq = unique(x);
+  uword k = unq.n_elem;
+  umat rtrn(x.n_elem, k, fill::zeros);
+  umat idx;
+  uvec z(x.n_elem);
+  for(uword j = 0; j<k; j++){
+    z.zeros();
+    z.elem(find(x == unq(j))).ones();
+    rtrn.col(j) = z;
+  }
+  return(rtrn);
+}

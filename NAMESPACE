@@ -54,6 +54,7 @@ export(all_finite)
 export(number_finite)
 export(col_to_list)
 export(row_to_list)
+export(numdum)
 
 import(data.table)
 importFrom(Rcpp,evalCpp)

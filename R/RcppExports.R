@@ -85,3 +85,7 @@ end_of_year <- function(date) {
     .Call('_dateutils_end_of_year', PACKAGE = 'dateutils', date)
 }
 
+numdum <- function(x) {
+    .Call('_dateutils_numdum', PACKAGE = 'dateutils', x)
+}
+
