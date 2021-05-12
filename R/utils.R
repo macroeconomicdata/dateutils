@@ -22,11 +22,20 @@ last_obs <- function(x){
   }
 } 
 
-pct_chng <- function(y, lags = 1){
+pct_chng <- function(y, lag = 1){
   y <- as.matrix(y)
-  y <- (y[-seq(lags), ,drop = FALSE] - y[-seq(NROW(y)-lags+1, NROW(y)), ,drop = FALSE])/y[-seq(NROW(y)-lags+1, NROW(y)), ,drop = FALSE]
-  y <- rbind(matrix(NA, lags, NCOL(y)), y) # keep the number of rows the same
+  y <- (y[-seq(lag), ,drop = FALSE] - y[-seq(NROW(y)-lag+1, NROW(y)), ,drop = FALSE])/y[-seq(NROW(y)-lag+1, NROW(y)), ,drop = FALSE]
+  y <- rbind(matrix(NA, lag, NCOL(y)), y) # keep the number of rows the same
   return(y)
+}
+
+Diff <- function(x, lag = 1){ # difference but keep same number of rows
+  if(is.null(dim(x))){
+    out <- c(rep(NA, lag), diff(x, lag = lag))
+  }else{
+    out <- rbind(matrix(NA, lag, NCOL(x)), diff(x, lag = lag))
+  }
+  return(out)
 }
 
 index_one_by_friday <- function(dte){

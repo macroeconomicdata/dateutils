@@ -89,3 +89,7 @@ numdum <- function(x) {
     .Call('_dateutils_numdum', PACKAGE = 'dateutils', x)
 }
 
+fill_forward <- function(x) {
+    .Call('_dateutils_fill_forward', PACKAGE = 'dateutils', x)
+}
+

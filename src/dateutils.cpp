@@ -415,3 +415,13 @@ arma::umat numdum(arma::vec x){
   }
   return(rtrn);
 }
+
+// [[Rcpp::export]]
+arma::vec fill_forward(arma::vec x){
+  for(uword j=1; j<x.n_elem; j++){
+    if(!std::isfinite(x(j))){
+      x(j) = x(j-1);
+    }
+  }
+  return(x);
+}
