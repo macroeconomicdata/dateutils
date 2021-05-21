@@ -425,3 +425,57 @@ arma::vec fill_forward(arma::vec x){
   }
   return(x);
 }
+
+// [[Rcpp::export]]
+arma::vec rollmean_cpp(arma::vec x, arma::uword n){
+  uword T = x.n_elem;
+  vec y(T);
+  y.fill(datum::nan);
+  vec tmp;
+  for(uword j=n-1; j<x.n_elem; j++){
+    tmp = x(span(j-n+1,j));
+    if(tmp.is_finite()){
+      y(j) = mean(tmp);
+    }
+  }
+  return(y);
+}
+
+// [[Rcpp::export]]
+arma::vec rollmax(arma::vec x, arma::uword n){
+  uword T = x.n_elem;
+  vec y(T);
+  vec xt;
+  x.replace(datum::nan, -datum::inf);
+  for(uword j=0; j<n; j++){
+    xt = x(span(0,j));
+    y(j) = xt.max();
+  }
+  for(uword j=n; j<T; j++){
+    xt = x(span(j-n+1,j));
+    y(j) = xt.max();
+  }
+  return(y);
+}
+
+// [[Rcpp::export]]
+arma::vec rollmin(arma::vec x, arma::uword n){
+  uword T = x.n_elem;
+  vec y(T);
+  vec xt;
+  x.replace(datum::nan, datum::inf);
+  for(uword j=0; j<n; j++){
+    xt = x(span(0,j));
+    y(j) = xt.min();
+  }
+  for(uword j=n; j<T; j++){
+    xt = x(span(j-n+1,j));
+    y(j) = xt.min();
+  }
+  return(y);
+}
+
+
+
+
+

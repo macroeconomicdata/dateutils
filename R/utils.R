@@ -330,3 +330,12 @@ allNA <- function(x) all(is.na(x))
 
 is_in <- function(that, this_in) this_in%in%that
 
+rollmean <- function(x, n){
+  y <- rollmean_cpp(x,n)
+  y[!is.finite(y)] <- NA
+  return(y)
+}
+
+
+
+

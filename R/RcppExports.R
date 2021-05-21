@@ -93,3 +93,15 @@ fill_forward <- function(x) {
     .Call('_dateutils_fill_forward', PACKAGE = 'dateutils', x)
 }
 
+rollmean_cpp <- function(x, n) {
+    .Call('_dateutils_rollmean_cpp', PACKAGE = 'dateutils', x, n)
+}
+
+rollmax <- function(x, n) {
+    .Call('_dateutils_rollmax', PACKAGE = 'dateutils', x, n)
+}
+
+rollmin <- function(x, n) {
+    .Call('_dateutils_rollmin', PACKAGE = 'dateutils', x, n)
+}
+

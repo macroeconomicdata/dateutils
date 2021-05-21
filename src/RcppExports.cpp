@@ -270,6 +270,42 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// rollmean_cpp
+arma::vec rollmean_cpp(arma::vec x, arma::uword n);
+RcppExport SEXP _dateutils_rollmean_cpp(SEXP xSEXP, SEXP nSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::vec >::type x(xSEXP);
+    Rcpp::traits::input_parameter< arma::uword >::type n(nSEXP);
+    rcpp_result_gen = Rcpp::wrap(rollmean_cpp(x, n));
+    return rcpp_result_gen;
+END_RCPP
+}
+// rollmax
+arma::vec rollmax(arma::vec x, arma::uword n);
+RcppExport SEXP _dateutils_rollmax(SEXP xSEXP, SEXP nSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::vec >::type x(xSEXP);
+    Rcpp::traits::input_parameter< arma::uword >::type n(nSEXP);
+    rcpp_result_gen = Rcpp::wrap(rollmax(x, n));
+    return rcpp_result_gen;
+END_RCPP
+}
+// rollmin
+arma::vec rollmin(arma::vec x, arma::uword n);
+RcppExport SEXP _dateutils_rollmin(SEXP xSEXP, SEXP nSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::vec >::type x(xSEXP);
+    Rcpp::traits::input_parameter< arma::uword >::type n(nSEXP);
+    rcpp_result_gen = Rcpp::wrap(rollmin(x, n));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_dateutils_comp_form", (DL_FUNC) &_dateutils_comp_form, 1},
@@ -295,6 +331,9 @@ static const R_CallMethodDef CallEntries[] = {
     {"_dateutils_end_of_year", (DL_FUNC) &_dateutils_end_of_year, 1},
     {"_dateutils_numdum", (DL_FUNC) &_dateutils_numdum, 1},
     {"_dateutils_fill_forward", (DL_FUNC) &_dateutils_fill_forward, 1},
+    {"_dateutils_rollmean_cpp", (DL_FUNC) &_dateutils_rollmean_cpp, 2},
+    {"_dateutils_rollmax", (DL_FUNC) &_dateutils_rollmax, 2},
+    {"_dateutils_rollmin", (DL_FUNC) &_dateutils_rollmin, 2},
     {NULL, NULL, 0}
 };
 
