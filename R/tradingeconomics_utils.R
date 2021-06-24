@@ -1,9 +1,11 @@
 extract_numeric <- function(x) as.numeric(gsub("[^0-9.-]+", "", as.character(x)))
 
-extract_character <- function(x) trimws(gsub("([^A-Za-z ]|NA)","",as.character(x)))
+extract_character <- function(x) trimws(gsub("([^A-Za-z _]|NA)","",as.character(x)))
+
+extract_basic_character <- function(x) tolower(trimws(gsub("([^A-Za-z]|NA)","",as.character(x))))
 
 
-limit_character <- function(x) substr(gsub("([^A-Za-z0-9 ]|NA)","",as.character(x)), 1, 100)
+limit_character <- function(x, limit = 100) substr(gsub("([^A-Za-z0-9 _]|NA)","",as.character(x)), 1, limit)
 
 
 seasonally_adjust_TE <- function(DT, sa_vars, series_names = "series_name", 
