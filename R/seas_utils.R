@@ -2,16 +2,41 @@
 # library(data.table)
 # library(dateutils)
 
+match_index_helper <- function(this, that){
+  out <- which(that==this)
+  if(length(out)==0){
+    return(NA)
+  }else{
+    return(out)
+  }
+} 
+
+match_index <- function(this, that){
+  idx <- sapply(this, FUN = match_index_helper, that)
+  return(list(that_idx = idx[!is.na(idx)],
+              this_idx = which(!is.na(idx))))
+}
+
 #' Tabular data to ts() format
 to_ts <- function(x, dates){
   dates <- as.Date(dates) #just in case we forget!
-  frq <- diff(dates) #measured in days
-  if(all(frq >= 27 & frq <= 35)){
-    x <- ts(x, start = c(year(dates[1]), month(dates[1])), frequency = 12)
-  }else if(all(frq >= 88 & frq <= 94)){
-    x <- ts(x, start = c(year(dates[1]), quarter(dates[1])), frequency = 4)
+  frq <- median(diff(dates)) #measured in days
+  if(frq >= 27 && frq <= 35){
+    dates <- first_of_month(dates)
+    sq <- seq.Date(from = dates[1], to = tail(dates,1), by = "month")
+    x_in <- rep(NA, length(sq))
+    idx <- match_index(dates, sq)
+    x_in[idx$that_idx] <- x[idx$this_idx]
+    x <- ts(x_in, start = c(year(dates[1]), month(dates[1])), frequency = 12)
+  }else if(frq >= 88 && frq <= 94){
+    dates <- first_of_quarter(dates)
+    sq <- seq.Date(from = dates[1], to = tail(dates,1), by = "quarter")
+    x_in <- rep(NA, length(sq))
+    idx <- match_index(dates, sq)
+    x_in[idx$that_idx] <- x[idx$this_idx]
+    x <- ts(x_in, start = c(year(dates[1]), quarter(dates[1])), frequency = 4)
   }else{
-    stop("Data must be either monthly or quarterly, and cannot have internal missing values")
+    stop("Data must be either monthly or quarterly")
   }
   return(x)
 }
@@ -28,11 +53,18 @@ can_seasonal <- function(dates){
 
 #' ts() data to tibble
 ts_to_df <- function(x){
-  ts_year   <- floor(time(x))
+  ts_year   <- floor(time(x) + 1e-5)
   ts_month  <- round(12*(time(x) - ts_year)) + 1
   ts_date   <- as.Date(paste(as.character(ts_year),ts_month,"01", sep = "-"))
-  ts_date   <- end_of_month(ts_date)
-  df        <- data.frame("ref_date" = ts_date, "value" = x)
+  frq <- median(diff(ts_date))
+  if(frq >= 27 && frq <= 35){
+    ts_date   <- end_of_month(ts_date)
+  }else if(all(frq >= 89 & frq <= 94)){
+    ts_date <- end_of_quarter(ts_date)
+  }else{
+    stop("Frequency is not monthly or quarterly")
+  }
+  df        <- data.frame("ref_date" = ts_date, "value" = unclass(x))
   return(df)
 }
 
@@ -53,21 +85,21 @@ match_ts_dates <- function(old_ts, new_ts){
   return(out)
 }
 
-run_sa <- function(x, dates, x11 = FALSE){
+run_sa <- function(x, dates, x11 = FALSE, transfunc = "none"){
   x_ts <- to_ts(x, dates)
   if(x11){
-    sa <- seas(x_ts, x11 = "", transform.function = "none", x11.appendfcst = "yes")
+    sa <- seas(x_ts, x11 = "", transform.function = transfunc, x11.appendfcst = "yes")
     if(!is.null(sa$series$d16)){
       adj_fact <- match_ts_dates(x_ts, sa$series$d16) # sa factors
     }else{
       adj_fact <- rep(0, length(x)) # sa factors
     }
   }else{
-    sa <- seas(x_ts, transform.function = "none", seats.appendfcst = "yes")
+    sa <- seas(x_ts, transform.function = transfunc, seats.appendfcst = "yes")
     if(!is.null(sa$series$s16)){
       adj_fact <- match_ts_dates(x_ts, sa$series$s16) # sa factors
     }else{
-      adj_fact <- rep(0, length(x)) # sa factors
+      adj_fact <- to_ts(rep(0, length(x)), dates) # sa factors
     }
   }
   sa_final <- match_ts_dates(x_ts, final(sa))
@@ -76,8 +108,8 @@ run_sa <- function(x, dates, x11 = FALSE){
               sa_final = sa_final))
 }
 
-try_sa <- function(x, dates, x11 = FALSE, series_name = NULL){
-  out <- try(run_sa(x, dates, x11))
+try_sa <- function(x, dates, x11 = FALSE, transfunc = "none", series_name = NULL){
+  out <- try(run_sa(x, dates, x11, transfunc))
   if(inherits(out, "try-error")){
     if(!is.null(series_name)) cat("Seasonal adjustment for", series_name, "failed \n")
     return(list(adj_fact = rep(0, length(x)),

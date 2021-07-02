@@ -1,4 +1,9 @@
 #library(data.table)
+extract_numeric <- function(x) as.numeric(gsub("[^0-9.-]+", "", as.character(x)))
+
+extract_character <- function(x) trimws(gsub("([^A-Za-z ]|NA)","",as.character(x)))
+
+limit_character <- function(x) substr(gsub("([^A-Za-z0-9 ]|NA)","",as.character(x)), 1, 100)
 
 any_finite <- function(Y) seq(NROW(Y))%in%(any_obs_cols(t(as.matrix(Y)))+1)
 all_finite <- function(Y) seq(NROW(Y))%in%(finite_cols(t(as.matrix(Y)))+1)

@@ -185,7 +185,7 @@ arma::uvec Day(std::vector<Date> dte){
   for(uword j=0; j<dte.size(); j++){
     tmp  = dte[j];
     dd = tmp.getDay();
-    d[j] = dd;
+    d(j) = dd;
   }
   return(d);
 }
