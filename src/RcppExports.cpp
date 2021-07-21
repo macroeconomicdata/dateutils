@@ -6,20 +6,25 @@
 
 using namespace Rcpp;
 
-// comp_form
-arma::mat comp_form(arma::mat B);
-RcppExport SEXP _dateutils_comp_form(SEXP BSEXP) {
+#ifdef RCPP_USE_GLOBAL_ROSTREAM
+Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
+Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
+#endif
+
+// Comp_Form
+arma::mat Comp_Form(arma::mat B);
+RcppExport SEXP _dateutils_Comp_Form(SEXP BSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< arma::mat >::type B(BSEXP);
-    rcpp_result_gen = Rcpp::wrap(comp_form(B));
+    rcpp_result_gen = Rcpp::wrap(Comp_Form(B));
     return rcpp_result_gen;
 END_RCPP
 }
-// long_run_var
-arma::mat long_run_var(arma::mat A, arma::mat Q, arma::uword m, arma::uword p);
-RcppExport SEXP _dateutils_long_run_var(SEXP ASEXP, SEXP QSEXP, SEXP mSEXP, SEXP pSEXP) {
+// Long_Run_Var
+arma::mat Long_Run_Var(arma::mat A, arma::mat Q, arma::uword m, arma::uword p);
+RcppExport SEXP _dateutils_Long_Run_Var(SEXP ASEXP, SEXP QSEXP, SEXP mSEXP, SEXP pSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -27,7 +32,7 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< arma::mat >::type Q(QSEXP);
     Rcpp::traits::input_parameter< arma::uword >::type m(mSEXP);
     Rcpp::traits::input_parameter< arma::uword >::type p(pSEXP);
-    rcpp_result_gen = Rcpp::wrap(long_run_var(A, Q, m, p));
+    rcpp_result_gen = Rcpp::wrap(Long_Run_Var(A, Q, m, p));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -226,47 +231,47 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// first_of_quarter
-std::vector<Date> first_of_quarter(std::vector<Date> date);
-RcppExport SEXP _dateutils_first_of_quarter(SEXP dateSEXP) {
+// First_Of_Quarter
+std::vector<Date> First_Of_Quarter(std::vector<Date> date);
+RcppExport SEXP _dateutils_First_Of_Quarter(SEXP dateSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< std::vector<Date> >::type date(dateSEXP);
-    rcpp_result_gen = Rcpp::wrap(first_of_quarter(date));
+    rcpp_result_gen = Rcpp::wrap(First_Of_Quarter(date));
     return rcpp_result_gen;
 END_RCPP
 }
-// end_of_year
-std::vector<Date> end_of_year(std::vector<Date> date);
-RcppExport SEXP _dateutils_end_of_year(SEXP dateSEXP) {
+// End_Of_Year
+std::vector<Date> End_Of_Year(std::vector<Date> date);
+RcppExport SEXP _dateutils_End_Of_Year(SEXP dateSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< std::vector<Date> >::type date(dateSEXP);
-    rcpp_result_gen = Rcpp::wrap(end_of_year(date));
+    rcpp_result_gen = Rcpp::wrap(End_Of_Year(date));
     return rcpp_result_gen;
 END_RCPP
 }
-// numdum
-arma::umat numdum(arma::vec x);
-RcppExport SEXP _dateutils_numdum(SEXP xSEXP) {
+// NumDum
+arma::umat NumDum(arma::vec x);
+RcppExport SEXP _dateutils_NumDum(SEXP xSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< arma::vec >::type x(xSEXP);
-    rcpp_result_gen = Rcpp::wrap(numdum(x));
+    rcpp_result_gen = Rcpp::wrap(NumDum(x));
     return rcpp_result_gen;
 END_RCPP
 }
-// fill_forward
-arma::vec fill_forward(arma::vec x);
-RcppExport SEXP _dateutils_fill_forward(SEXP xSEXP) {
+// Fill_Forward
+arma::vec Fill_Forward(arma::vec x);
+RcppExport SEXP _dateutils_Fill_Forward(SEXP xSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< arma::vec >::type x(xSEXP);
-    rcpp_result_gen = Rcpp::wrap(fill_forward(x));
+    rcpp_result_gen = Rcpp::wrap(Fill_Forward(x));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -282,34 +287,34 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// rollmax
-arma::vec rollmax(arma::vec x, arma::uword n);
-RcppExport SEXP _dateutils_rollmax(SEXP xSEXP, SEXP nSEXP) {
+// RollMax
+arma::vec RollMax(arma::vec x, arma::uword n);
+RcppExport SEXP _dateutils_RollMax(SEXP xSEXP, SEXP nSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< arma::vec >::type x(xSEXP);
     Rcpp::traits::input_parameter< arma::uword >::type n(nSEXP);
-    rcpp_result_gen = Rcpp::wrap(rollmax(x, n));
+    rcpp_result_gen = Rcpp::wrap(RollMax(x, n));
     return rcpp_result_gen;
 END_RCPP
 }
-// rollmin
-arma::vec rollmin(arma::vec x, arma::uword n);
-RcppExport SEXP _dateutils_rollmin(SEXP xSEXP, SEXP nSEXP) {
+// RollMin
+arma::vec RollMin(arma::vec x, arma::uword n);
+RcppExport SEXP _dateutils_RollMin(SEXP xSEXP, SEXP nSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< arma::vec >::type x(xSEXP);
     Rcpp::traits::input_parameter< arma::uword >::type n(nSEXP);
-    rcpp_result_gen = Rcpp::wrap(rollmin(x, n));
+    rcpp_result_gen = Rcpp::wrap(RollMin(x, n));
     return rcpp_result_gen;
 END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_dateutils_comp_form", (DL_FUNC) &_dateutils_comp_form, 1},
-    {"_dateutils_long_run_var", (DL_FUNC) &_dateutils_long_run_var, 4},
+    {"_dateutils_Comp_Form", (DL_FUNC) &_dateutils_Comp_Form, 1},
+    {"_dateutils_Long_Run_Var", (DL_FUNC) &_dateutils_Long_Run_Var, 4},
     {"_dateutils_finite_cols", (DL_FUNC) &_dateutils_finite_cols, 1},
     {"_dateutils_count_finite", (DL_FUNC) &_dateutils_count_finite, 1},
     {"_dateutils_any_obs_cols", (DL_FUNC) &_dateutils_any_obs_cols, 1},
@@ -327,13 +332,13 @@ static const R_CallMethodDef CallEntries[] = {
     {"_dateutils_End_of_Quarter", (DL_FUNC) &_dateutils_End_of_Quarter, 1},
     {"_dateutils_First_previous_Quarter", (DL_FUNC) &_dateutils_First_previous_Quarter, 1},
     {"_dateutils_End_previous_Quarter", (DL_FUNC) &_dateutils_End_previous_Quarter, 1},
-    {"_dateutils_first_of_quarter", (DL_FUNC) &_dateutils_first_of_quarter, 1},
-    {"_dateutils_end_of_year", (DL_FUNC) &_dateutils_end_of_year, 1},
-    {"_dateutils_numdum", (DL_FUNC) &_dateutils_numdum, 1},
-    {"_dateutils_fill_forward", (DL_FUNC) &_dateutils_fill_forward, 1},
+    {"_dateutils_First_Of_Quarter", (DL_FUNC) &_dateutils_First_Of_Quarter, 1},
+    {"_dateutils_End_Of_Year", (DL_FUNC) &_dateutils_End_Of_Year, 1},
+    {"_dateutils_NumDum", (DL_FUNC) &_dateutils_NumDum, 1},
+    {"_dateutils_Fill_Forward", (DL_FUNC) &_dateutils_Fill_Forward, 1},
     {"_dateutils_rollmean_cpp", (DL_FUNC) &_dateutils_rollmean_cpp, 2},
-    {"_dateutils_rollmax", (DL_FUNC) &_dateutils_rollmax, 2},
-    {"_dateutils_rollmin", (DL_FUNC) &_dateutils_rollmin, 2},
+    {"_dateutils_RollMax", (DL_FUNC) &_dateutils_RollMax, 2},
+    {"_dateutils_RollMin", (DL_FUNC) &_dateutils_RollMin, 2},
     {NULL, NULL, 0}
 };
 

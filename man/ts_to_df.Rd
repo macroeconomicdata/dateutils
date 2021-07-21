@@ -2,10 +2,13 @@
 % Please edit documentation in R/seas_utils.R
 \name{ts_to_df}
 \alias{ts_to_df}
-\title{ts() data to tibble}
+\title{ts() data to a dataframe}
 \usage{
 ts_to_df(x)
 }
+\arguments{
+\item{x}{ts() format data which is either monthly or quarterly}
+}
 \description{
-ts() data to tibble
+Transform monthly or quarterly ts() data to a dataframe
 }

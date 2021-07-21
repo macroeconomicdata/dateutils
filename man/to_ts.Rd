@@ -6,6 +6,11 @@
 \usage{
 to_ts(x, dates)
 }
+\arguments{
+\item{x}{data}
+
+\item{dates}{dates}
+}
 \description{
-Tabular data to ts() format
+transform data in 'x' corresponding to dates in 'dates' to ts() format
 }

@@ -6,7 +6,7 @@ using namespace Rcpp;
 
 //Create the companion form of the transition matrix B
 // [[Rcpp::export]]
-arma::mat comp_form(arma::mat B){
+arma::mat Comp_Form(arma::mat B){
   uword r = B.n_rows;
   uword c = B.n_cols;
   mat A   = join_vert(B, join_horiz(eye<mat>(c-r,c-r), zeros<mat>(c-r,r)));
@@ -15,7 +15,7 @@ arma::mat comp_form(arma::mat B){
 
 // Get initial variance for the Kalman Filter
 // [[Rcpp::export]]
-arma::mat long_run_var(arma::mat A,
+arma::mat Long_Run_Var(arma::mat A,
                        arma::mat Q,
                        arma::uword m,
                        arma::uword p){
@@ -364,7 +364,7 @@ std::vector<Date> End_previous_Quarter(std::vector<Date> date){
 
 //return first day of the quarter
 // [[Rcpp::export]]
-std::vector<Date> first_of_quarter(std::vector<Date> date){
+std::vector<Date> First_Of_Quarter(std::vector<Date> date){
   std::vector<Date> d(date.size());
   Rcpp::Date tmp;
   int yr;
@@ -389,7 +389,7 @@ std::vector<Date> first_of_quarter(std::vector<Date> date){
 
 //return the last day of the year
 // [[Rcpp::export]]
-std::vector<Date> end_of_year(std::vector<Date> date){
+std::vector<Date> End_Of_Year(std::vector<Date> date){
   std::vector<Date> d(date.size());
   Rcpp::Date tmp;
   int yr;
@@ -402,7 +402,7 @@ std::vector<Date> end_of_year(std::vector<Date> date){
 }
 
 // [[Rcpp::export]]
-arma::umat numdum(arma::vec x){
+arma::umat NumDum(arma::vec x){
   vec unq = unique(x);
   uword k = unq.n_elem;
   umat rtrn(x.n_elem, k, fill::zeros);
@@ -417,7 +417,7 @@ arma::umat numdum(arma::vec x){
 }
 
 // [[Rcpp::export]]
-arma::vec fill_forward(arma::vec x){
+arma::vec Fill_Forward(arma::vec x){
   for(uword j=1; j<x.n_elem; j++){
     if(!std::isfinite(x(j))){
       x(j) = x(j-1);
@@ -442,7 +442,7 @@ arma::vec rollmean_cpp(arma::vec x, arma::uword n){
 }
 
 // [[Rcpp::export]]
-arma::vec rollmax(arma::vec x, arma::uword n){
+arma::vec RollMax(arma::vec x, arma::uword n){
   uword T = x.n_elem;
   vec y(T);
   vec xt;
@@ -459,7 +459,7 @@ arma::vec rollmax(arma::vec x, arma::uword n){
 }
 
 // [[Rcpp::export]]
-arma::vec rollmin(arma::vec x, arma::uword n){
+arma::vec RollMin(arma::vec x, arma::uword n){
   uword T = x.n_elem;
   vec y(T);
   vec xt;

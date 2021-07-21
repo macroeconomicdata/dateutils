@@ -1,4 +1,5 @@
 
+
 pct_by_month <- function(response, dt){
   out <- dt[ , sum(value == response)/.N, by = end_of_month(ref_date)]
   names(out) <- c("ref_date", response)
@@ -45,7 +46,18 @@ pct_total <- function(dt, col_name){
   return(out)
 }
 
-pct_response <- function(dt, col_name = NULL, by = "month", date_name = "ref_date"){
+#' Percent of responses at a given frequency
+#' 
+#' Return the percent of responses to categorical answers at a specified frequency
+#' 
+#' @param dt data table of responses
+#' @param col_name name of column containing responses
+#' @param by frequency of response aggregation, one of `"month"`, `"quarter"`, `"week"`
+#' @param date_name name of column containing dates 
+pct_response <- function(dt, col_name = NULL, by = c("month", "quarter", "week"), date_name = "ref_date"){
+  dt <- data.table(dt)
+  setnames(dt, date_name, "ref_date")
+  setcolorder(dt, "ref_date")
   if(NCOL(dt)!=2){
     dt <- dt[ , c("ref_date", col_name), with = FALSE]
   }
@@ -63,13 +75,23 @@ pct_response <- function(dt, col_name = NULL, by = "month", date_name = "ref_dat
     out <- lapply(resp, pct_by_quarter, dt=dt)
     out <- Reduce(function(...) merge(..., all = TRUE), out)
   }else{
-    error("by must be month, week, or quarter")
+    stop("by must be month, week, or quarter")
   }
   return(out)
 }
 
-
+#' Number of of responses at a given frequency
+#' 
+#' Return the total number of responses to categorical answers at a specified frequency
+#' 
+#' @param dt data table of responses
+#' @param col_name name of column containing responses
+#' @param by frequency of response aggregation, one of `"month"`, `"quarter"`, `"week"`
+#' @param date_name name of column containing dates 
 total_response <- function(dt, col_name = NULL, by = "month", date_name = "ref_date"){
+  dt <- data.table(dt)
+  setnames(dt, date_name, "ref_date")
+  setcolorder(dt, "ref_date")
   if(NCOL(dt)!=2){
     dt <- dt[ , c("ref_date", col_name), with = FALSE]
   }
@@ -87,7 +109,7 @@ total_response <- function(dt, col_name = NULL, by = "month", date_name = "ref_d
     out <- lapply(resp, tot_by_quarter, dt=dt)
     out <- Reduce(function(...) merge(..., all = TRUE), out)
   }else{
-    error("by must be month, week, or quarter")
+    stop("by must be month, week, or quarter")
   }
   return(out)
 }

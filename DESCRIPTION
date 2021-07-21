@@ -1,20 +1,22 @@
 Package: dateutils
 Type: Package
 Title: Date Utils
-Version: 0.1.0
+Version: 0.1.1
 Author: Seth Leonard
 Maintainer: Seth Leonard <seth@ottoquant.com>
-Description: Utilities for dates in R
-License: MIT
+Description: Utilities for mixed frequency data. In particular, use to aggregate and normalize tabular mixed frequency data, index dates to end of period, and seasonally adjust tabular data.
+Depends: R (>= 3.5.0)
+License: MIT + file LICENSE
+Suggests: 
+  rmarkdown,
+  knitr,
+  testthat
 Imports:
   Rcpp (>= 0.12.13),
-  RcppArmadillo (>= 0.7.900.2.0),
   data.table,
   seasonal
-Suggests:
-  rmarkdown
 LinkingTo: Rcpp, RcppArmadillo
 RoxygenNote: 7.1.1
 LazyData: true
 Encoding: UTF-8
-VignetteBuilder: knitr
+VignetteBuilder: knitr, rmarkdown
