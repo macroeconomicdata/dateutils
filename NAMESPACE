@@ -1,6 +1,7 @@
 
 export(month_days)
 export(end_of_month)
+export(end_of_period)
 export(end_next_month)
 export(day)
 export(end_previous_month)
@@ -59,6 +60,9 @@ export(total_response)
 export(rollmax)
 export(rollmin)
 export(match_index)
+export(process_MF)
+export(process)
+export(process_wide)
 
 import(data.table)
 importFrom(Rcpp,evalCpp)

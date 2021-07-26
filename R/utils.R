@@ -153,10 +153,17 @@ index_by_friday <- function(dates){
 
 #' Return the mean
 #'
-#' Return the mean of `x`. If no observations, return `NA`. This is a workaround for the fact that in data.table, `:= mean()` will return `NaN` where there are no observations
+#' Return the mean of `x`. If no observations, return `NA`. This is a workaround for the fact that in data.table, `:= mean(x, na.rm = TRUE)` will return `NaN` where there are no observations
 #' 
 #' @param x data potentially with non-finite values
 mean_na <- function(x) if(all(!is.finite(x))) return(as.double(NA)) else return(as.double(mean(x, na.rm = T)))
+
+#' Return the standard deviation
+#'
+#' Return the standard deviation of `x`. If no observations, return `NA`. This is a workaround for the fact that in data.table, `:= sd(x, na.rm = TRUE)` will return `NaN` where there are no observations
+#' 
+#' @param x data potentially with non-finite values
+sd_na <- function(x) if(all(!is.finite(x))) return(as.double(NA)) else return(as.double(sd(x, na.rm = T)))
 
 #' Return the sum
 #'
@@ -400,11 +407,15 @@ rollmean <- function(x, n){
 #' Get frequency of data based on missing observations
 #'
 #' Guess the frequency of a data series based on the pattern of missing observations
-#' 
+#'
 #' @param x data, potentially with missing observations
 #' @param dates corresponding dates in `as.Date()` format
-get_data_frq <- function(x, dates){
-  ddates <- median(diff(dates[!is.na(x)]))
+get_data_frq <- function(x = NULL, dates){
+  if(is.null(x)){
+    ddates <- median(diff(dates))
+  }else{
+    ddates <- median(diff(dates[!is.na(x)]))
+  }
   if(ddates > 300){
     return("year")
   }else if(ddates > 89 && ddates < 93){
@@ -419,6 +430,7 @@ get_data_frq <- function(x, dates){
     return(NA)
   }
 }
+
 
 #' Format weekly frequency data
 #'

@@ -228,18 +228,34 @@ int MonthDays(double year,
 //   return(days);
 // }
 
+// Get year and month for shift
+ivec month_13(int val){
+  int yr = val/12;
+  int mnth = val%12;
+  if(mnth <= 0){
+    mnth += 12;
+    yr -= 1;
+  } 
+  ivec rtrn = {yr, mnth};
+  return(rtrn);
+}
 
 //return last day for the given month
 // [[Rcpp::export]]
-std::vector<Date> End_of_Month(std::vector<Date> date){
+std::vector<Date> End_of_Month(std::vector<Date> date, int shift = 0){
   std::vector<Date> d(date.size());
   Rcpp::Date tmp;
-  int days;
+  int mnth;
+  int yr;
+  ivec yrm;
   if(date.size()>0){
     for(uword j=0; j<date.size(); j++){
       tmp  = date[j];
-      days = MonthDays(tmp.getYear(), tmp.getMonth());
-      d[j] = Date(tmp.getYear(), tmp.getMonth(), days);
+      yrm = month_13(tmp.getMonth() + shift);
+      yr = tmp.getYear() + yrm(0);
+      mnth = yrm(1);
+      Rcpp::Rcout << yr << " " << mnth << endl;
+      d[j] = Date(yr, mnth, MonthDays(yr, mnth));
     }
   }
   return(d);
@@ -285,14 +301,17 @@ std::vector<Date> End_previous_Month(std::vector<Date> date){
 
 //return last day for the given quarter
 // [[Rcpp::export]]
-std::vector<Date> End_of_Quarter(std::vector<Date> date){
+std::vector<Date> End_of_Quarter(std::vector<Date> date, int shift = 0){
   std::vector<Date> d(date.size());
   Rcpp::Date tmp;
-  int days;
   int mnth;
+  int yr;
+  ivec yrm;
   for(uword j=0; j<date.size(); j++){
     tmp  = date[j];
-    mnth = tmp.getMonth();
+    yrm = month_13(tmp.getMonth() + 3*shift);
+    yr = tmp.getYear() + yrm(0);
+    mnth = yrm(1);
     if(mnth == 1 || mnth == 2){
       mnth = 3;
     }else if(mnth == 4 || mnth == 5){
@@ -302,8 +321,7 @@ std::vector<Date> End_of_Quarter(std::vector<Date> date){
     }else if(mnth == 10 || mnth == 11){
       mnth = 12;
     }
-    days = MonthDays(tmp.getYear(), mnth);
-    d[j] = Date(tmp.getYear(), mnth, days);
+    d[j] = Date(yr, mnth, MonthDays(tmp.getYear(), mnth));
   }
   return(d);
 }

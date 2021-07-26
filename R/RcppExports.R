@@ -53,8 +53,8 @@ MonthDays <- function(year, month) {
     .Call(`_dateutils_MonthDays`, year, month)
 }
 
-End_of_Month <- function(date) {
-    .Call(`_dateutils_End_of_Month`, date)
+End_of_Month <- function(date, shift = 0L) {
+    .Call(`_dateutils_End_of_Month`, date, shift)
 }
 
 End_next_Month <- function(date) {
@@ -65,8 +65,8 @@ End_previous_Month <- function(date) {
     .Call(`_dateutils_End_previous_Month`, date)
 }
 
-End_of_Quarter <- function(date) {
-    .Call(`_dateutils_End_of_Quarter`, date)
+End_of_Quarter <- function(date, shift = 0L) {
+    .Call(`_dateutils_End_of_Quarter`, date, shift)
 }
 
 First_previous_Quarter <- function(date) {

@@ -6,12 +6,23 @@
 #' @param month integer month value
 month_days <- function(year, month) MonthDays(year, month)
 
-#' End of month date
+#' End of period date
 #'
-#' Return the date of the last day of the month
+#' Return the date of the last day of the period (week, month, quarter, year). Weekly dates are indexed to Friday.
 #' 
 #' @param date date value formated as.Date()
-end_of_month <- function(date) End_of_Month(date)
+end_of_period <- function(dates, period = c('month', 'week', 'quarter', 'year'), shift = 0){
+  period <- match.arg(period)
+  shift <- round(shift) # must be integer valued
+  if(period == 'week') return(index_by_friday(dates) + 7*shift)
+  else if(period == 'month') End_of_Month(dates, shift)
+  else if(period == 'quarter') End_of_Quarter(dates, shift)
+  else if(period == 'year') return(as.Date(paste(format(dates, "%Y") + shift, "12", "31", sep = "-")))
+}
+
+
+
+# end_of_period(as.Date("2000-03-31"), period = 'quarter', shift = 3)
 
 #' End of next month date
 #'
@@ -19,6 +30,13 @@ end_of_month <- function(date) End_of_Month(date)
 #' 
 #' @param date date value formated as.Date()
 end_next_month <- function(date) End_next_Month(date)
+
+#' End of  month date
+#'
+#' Return the date of the last day of the month
+#' 
+#' @param date date value formated as.Date()
+end_of_month <- function(date) End_of_Month(date)
 
 #' End of previous month date
 #'

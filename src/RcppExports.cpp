@@ -166,13 +166,14 @@ BEGIN_RCPP
 END_RCPP
 }
 // End_of_Month
-std::vector<Date> End_of_Month(std::vector<Date> date);
-RcppExport SEXP _dateutils_End_of_Month(SEXP dateSEXP) {
+std::vector<Date> End_of_Month(std::vector<Date> date, int shift);
+RcppExport SEXP _dateutils_End_of_Month(SEXP dateSEXP, SEXP shiftSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< std::vector<Date> >::type date(dateSEXP);
-    rcpp_result_gen = Rcpp::wrap(End_of_Month(date));
+    Rcpp::traits::input_parameter< int >::type shift(shiftSEXP);
+    rcpp_result_gen = Rcpp::wrap(End_of_Month(date, shift));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -199,13 +200,14 @@ BEGIN_RCPP
 END_RCPP
 }
 // End_of_Quarter
-std::vector<Date> End_of_Quarter(std::vector<Date> date);
-RcppExport SEXP _dateutils_End_of_Quarter(SEXP dateSEXP) {
+std::vector<Date> End_of_Quarter(std::vector<Date> date, int shift);
+RcppExport SEXP _dateutils_End_of_Quarter(SEXP dateSEXP, SEXP shiftSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< std::vector<Date> >::type date(dateSEXP);
-    rcpp_result_gen = Rcpp::wrap(End_of_Quarter(date));
+    Rcpp::traits::input_parameter< int >::type shift(shiftSEXP);
+    rcpp_result_gen = Rcpp::wrap(End_of_Quarter(date, shift));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -326,10 +328,10 @@ static const R_CallMethodDef CallEntries[] = {
     {"_dateutils_Day", (DL_FUNC) &_dateutils_Day, 1},
     {"_dateutils_replace_day", (DL_FUNC) &_dateutils_replace_day, 2},
     {"_dateutils_MonthDays", (DL_FUNC) &_dateutils_MonthDays, 2},
-    {"_dateutils_End_of_Month", (DL_FUNC) &_dateutils_End_of_Month, 1},
+    {"_dateutils_End_of_Month", (DL_FUNC) &_dateutils_End_of_Month, 2},
     {"_dateutils_End_next_Month", (DL_FUNC) &_dateutils_End_next_Month, 1},
     {"_dateutils_End_previous_Month", (DL_FUNC) &_dateutils_End_previous_Month, 1},
-    {"_dateutils_End_of_Quarter", (DL_FUNC) &_dateutils_End_of_Quarter, 1},
+    {"_dateutils_End_of_Quarter", (DL_FUNC) &_dateutils_End_of_Quarter, 2},
     {"_dateutils_First_previous_Quarter", (DL_FUNC) &_dateutils_First_previous_Quarter, 1},
     {"_dateutils_End_previous_Quarter", (DL_FUNC) &_dateutils_End_previous_Quarter, 1},
     {"_dateutils_First_Of_Quarter", (DL_FUNC) &_dateutils_First_Of_Quarter, 1},
