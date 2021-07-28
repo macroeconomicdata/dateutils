@@ -2,7 +2,7 @@
 % Please edit documentation in R/dateutils.R
 \name{end_of_month}
 \alias{end_of_month}
-\title{End of month date}
+\title{End of  month date}
 \usage{
 end_of_month(date)
 }

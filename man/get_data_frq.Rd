@@ -4,7 +4,7 @@
 \alias{get_data_frq}
 \title{Get frequency of data based on missing observations}
 \usage{
-get_data_frq(x, dates)
+get_data_frq(x = NULL, dates)
 }
 \arguments{
 \item{x}{data, potentially with missing observations}

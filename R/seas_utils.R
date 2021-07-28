@@ -137,8 +137,8 @@ run_sa <- function(x, dates, x11 = FALSE, transfunc = c("none", "auto", "log")){
   }
   sa_final <- match_ts_dates(x_ts, final(sa))
   sa_final[!is.finite(x_ts)] <- NA
-  return(list(adj_fact = adj_fact,
-              sa_final = sa_final))
+  return(list(adj_fact = unclass(adj_fact),
+              sa_final = unclass(sa_final)))
 }
 
 #' Seasonally adjust data using seas()
@@ -254,15 +254,16 @@ spline_fill_trend <- function(x){
 try_trend <- function(x, outlier_rm = TRUE, span = 0.6){
   trend <- try(loess(x ~ seq(length(x)), na.action = na.exclude, span = span))
   if(inherits(trend, "try-error")) return(rep(0,length(x)))
-  trend <- predict(trend)
-  vnce <- mean((x-trend)^2, na.rm = T)
-  x[abs(x-trend) > 3*sqrt(vnce)] <- NA
-  trend <- try(loess(x ~ seq(length(x)), na.action = na.exclude, span = span))
-  if(inherits(trend, "try-error")){
-    return(rep(0,length(x)))
-  }else{
-    return(spline_fill_trend(predict(trend)))
-  } 
+  if(outlier_rm){
+    for(j in seq(3)){
+      trend <- predict(trend)
+      vnce <- mean((x-trend)^2, na.rm = T)
+      x[abs(x-trend) > 3*sqrt(vnce)] <- NA
+      trend <- try(loess(x ~ seq(length(x)), na.action = na.exclude, span = span))
+      if(inherits(trend, "try-error")) return(rep(0,length(x)))
+    }
+  }
+  return(spline_fill_trend(predict(trend)))
 }
 
 #' Remove low frequency trends from data
@@ -275,16 +276,17 @@ try_trend <- function(x, outlier_rm = TRUE, span = 0.6){
 try_detrend <- function(x, outlier_rm = TRUE, span = 0.6){
   x_in <- x
   trend <- try(loess(x ~ seq(length(x)), na.action = na.exclude, span = span))
-  if(inherits(trend, "try-error")) return(x)
-  trend <- predict(trend)
-  vnce <- mean((x-trend)^2, na.rm = T)
-  x[abs(x-trend) > 3*sqrt(vnce)] <- NA
-  trend <- try(loess(x ~ seq(length(x)), na.action = na.exclude, span = span))
-  if(inherits(trend, "try-error")){
-    return(x)
-  }else{
-    return(x_in - spline_fill_trend(predict(trend)))
+  if(inherits(trend, "try-error")) return(x_in)
+  if(outlier_rm){
+    for(j in seq(3)){
+      trend <- predict(trend)
+      vnce <- mean((x-trend)^2, na.rm = T)
+      x[abs(x-trend) > 3*sqrt(vnce)] <- NA
+      trend <- try(loess(x ~ seq(length(x)), na.action = na.exclude, span = span))
+      if(inherits(trend, "try-error")) return(x_in)
+    }
   }
+  return(x_in - spline_fill_trend(predict(trend)))
 }
 
 

@@ -254,7 +254,6 @@ std::vector<Date> End_of_Month(std::vector<Date> date, int shift = 0){
       yrm = month_13(tmp.getMonth() + shift);
       yr = tmp.getYear() + yrm(0);
       mnth = yrm(1);
-      Rcpp::Rcout << yr << " " << mnth << endl;
       d[j] = Date(yr, mnth, MonthDays(yr, mnth));
     }
   }

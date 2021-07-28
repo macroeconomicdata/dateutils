@@ -10,5 +10,5 @@ mean_na(x)
 \item{x}{data potentially with non-finite values}
 }
 \description{
-Return the mean of `x`. If no observations, return `NA`. This is a workaround for the fact that in data.table, `:= mean()` will return `NaN` where there are no observations
+Return the mean of `x`. If no observations, return `NA`. This is a workaround for the fact that in data.table, `:= mean(x, na.rm = TRUE)` will return `NaN` where there are no observations
 }

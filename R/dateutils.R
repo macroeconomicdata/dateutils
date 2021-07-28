@@ -10,7 +10,9 @@ month_days <- function(year, month) MonthDays(year, month)
 #'
 #' Return the date of the last day of the period (week, month, quarter, year). Weekly dates are indexed to Friday.
 #' 
-#' @param date date value formated as.Date()
+#' @param dates Date values formatted as.Date()
+#' @param period One of `'month'`, `'week'`, `'quarter'`, `'year'`.
+#' @param shift Integer, shift date forward (positive values) or backwards (negative values) by the number of periods.
 end_of_period <- function(dates, period = c('month', 'week', 'quarter', 'year'), shift = 0){
   period <- match.arg(period)
   shift <- round(shift) # must be integer valued

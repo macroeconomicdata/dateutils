@@ -1,69 +1,21 @@
-try_SA_factor <- function(x, dates){
-  out <- try(try_sa(x, dates, transfunc = "none", x11 = TRUE))
-  if(!inherits(out, "try-error")){
-    return(out)
-  }else{
-    return(rep(0, length(dates)))
+try_seas_factor <- function(x, dates, series_name = NULL){
+  if(!can_seasonal(dates[is.finite(x)])){
+    warning(paste0("Cannot seasonally adjust ", series_name, "; seasonal adjustment requires quarterly or monthly data without internal NA's"))
+    return(rep(0, length(x)))
   }
-}
-
-get_trend <- function(x, span = 0.6, threshold = 3){
-  idx <- is.finite(x)
-  trend <- rep(NA, length(x))
-  outliers <- rep(FALSE, length(x))
-  x <- x[idx]
-  outx <- rep(FALSE, length(x))
-  for(j in 1:3){ # remove outliers
-    out <- loess(x ~ seq(length(x)), na.action = na.exclude, span = span)
-    tnd <- predict(out, newdata = seq(length(x)))
-    xdt <- x - tnd
-    sd <- mean((xdt -mean(xdt, na.rm = TRUE))^2, na.rm = TRUE)^.5
-    outx[abs(xdt)>threshold*sd] <- TRUE
-    x[outx] <- NA
-  }
-  trend[idx] <- tnd
-  trend <- spline_fill_trend(trend)
-  outliers[idx] <- outx
-  return(list(trend = trend,
-              outliers = outliers))
-}
-
-try_get_trend <- function(x, span = 0.6, threshold = 3){
-  out <- try(get_trend(x, span, threshold))
-  if(!inherits(out, "try-error")){
-    return(out)
-  }else{
-    return(list(trend = rep(0, length(x)),
-                outliers = rep(FALSE, length(x))))
-  }
+  out <- try_sa(x, dates, transfunc = "none", x11 = TRUE, series_name = series_name)
+  return(out$adj_fact)
 }
 
 get_lags <- function(y, lags) sapply(lags, FUN = function(j) shift(y, j))
-
-replicate_miss_obs <- function(Y, obs_idx, high_frq = "day"){
-  if(length(obs_idx) != NROW(Y)) stop("Length of obs_idx must agree with number of columns in Y")
-  last_obs <- max(seq(NROW(Y))[obs_idx])
-  if(last_obs == NROW(Y)) stop("No partial observations")
-  obs_count <- cumsum(c(FALSE, obs_idx[-length(obs_idx)])) # shifted to get first obs for each period
-  ED <- Y[(last_obs+1):NROW(Y), , drop = FALSE] # end data
-  IDX <- is.finite(ED)
-  some <- apply(IDX, MARGIN = 2, FUN = any)
-  Yp <- Y[ , some, drop = FALSE] # partial observations
-  IDX <- IDX[ , some, drop = FALSE]
-  Yp <- split(Yp, obs_count%x%matrix(1, 1, NCOL(Yp))) # each period as it's own list
-  frq <- apply(Y, MARGIN = 2, FUN = function(j) ceiling(median(diff(which(is.finite(j))), na.rm = TRUE)))
-  Yp <- do.call("rbind",lapply(Yp, FUN = get_aggregation, IDX = IDX, frq = frq[some], high_frq = high_frq))
-  colnames(Yp) <- colnames(Y)[some]
-  return(Yp)
-}
 
 # find the structure of missing observatins in the data and replicate it
 rep_missing_obs <- function(lags, LHS, RHS, frq){
   # Get tail of data and identify observations
   last_LHS_obs <- max(LHS[is.finite(value)]$ref_date)
-  if(lags>1){
+  if(lags>0){
     sq <- LHS[ref_date <= last_LHS_obs]$ref_date
-    last_LHS_obs <- sq[length(sq) - lags + 1]
+    last_LHS_obs <- sq[length(sq) - lags]
   }
   RHS_tail <- RHS[ref_date>last_LHS_obs]
   RHS_tail[ , index_of_observations := seq(.N), by = series_name]
@@ -75,7 +27,8 @@ rep_missing_obs <- function(lags, LHS, RHS, frq){
   
   # Drop observations we do not see in the contemporaneous data
   for(this_series_name in unique(RHS_0$series_name)){
-    RHS_0 <- RHS_0[!(series_name == (this_series_name)  & !index_of_observations%in%RHS_tail[series_name == (this_series_name)]$index_of_observations)]
+    idx <- RHS_tail[series_name == (this_series_name)]$index_of_observations
+    RHS_0 <- RHS_0[!(series_name == (this_series_name)  & !index_of_observations%in%idx)]
   }
   
   # Aggregate to LHS frequency
@@ -122,18 +75,20 @@ cast_LHS <- function(lags, LHS, frq){
 #' return LHS variables in the matrix `Y`, RHS variables in the matrix `X`, and corresponding dates (by index) in the
 #' date vector `dates`.
 #' @examples  
-#' dt <- process_MF(fred[series_name == "gdp constant prices"], fred[series_name != "gdp constant prices"])
+#' LHS <- fred[series_name == "gdp constant prices"]
+#' RHS <- fred[series_name != "gdp constant prices"]
+#' dt <- process_MF(LHS, RHS)
 process_MF <- function(LHS, RHS, LHS_lags = 1, RHS_lags = 1, as_of = NULL, frq = c('auto', 'week', 'month', 'quarter', 'year'), 
                        date_name = "ref_date", id_name = "series_name", value_name = "value", pub_date_name = "pub_date", 
                        return_dt = TRUE){
   
-  # frq <- match.arg(frq)
+  frq <- match.arg(frq)
   LHS <- data.table(LHS)
   RHS <- data.table(RHS)
   
   # Sample data to run through the code line by line
-  # LHS <- fred[series_name == "gdp constant prices" & ref_date >= as.Date("2000-01-01")]
-  # RHS <- fred[series_name != "gdp constant prices" & ref_date >= as.Date("2000-01-01")]
+  # LHS <- fred[series_name == "gdp constant prices"]
+  # RHS <- fred[series_name != "gdp constant prices"]
   # RHS_lags <- 3
   # LHS_lags <- 3
   # as_of <- as.Date("2021-02-15")
@@ -181,7 +136,7 @@ process_MF <- function(LHS, RHS, LHS_lags = 1, RHS_lags = 1, as_of = NULL, frq =
     }
     if(frq == 'day') stop('LHS data is high frequency')
   }
-  
+
   RHS_list <- lapply(seq(0, RHS_lags), FUN=rep_missing_obs, LHS=LHS, RHS=RHS, frq=frq)
   rhs <- Reduce(function(...) merge(..., by = "ref_date", all = TRUE), RHS_list) # merge lists together
   
@@ -200,8 +155,6 @@ process_MF <- function(LHS, RHS, LHS_lags = 1, RHS_lags = 1, as_of = NULL, frq =
     return(list(Y = Y,
                 X = X,
                 dates = dates))
-  }else{
-    return(out)
   }
 }
 
@@ -231,11 +184,13 @@ process_MF <- function(LHS, RHS, LHS_lags = 1, RHS_lags = 1, as_of = NULL, frq =
 #' argument to `process_wide()` of `detrend`, `center`, or `scale` is `FALSE`, the operation will not be performed. If `TRUE`,
 #' the function will check for the column of the same name in `lib`. If the column exists, T/F entries from this column are used
 #' to determine which series to transform. If the column does not exist, all series will be transformed. 
-#'@example
+#'@examples
 #' dt <- process(fred, fredlib)
 #' 
-#' dtQ <- process_MF(fred[series_name == "gdp constant prices"], fred[series_name != "gdp constant prices"]) #quarterly mixed frequency
-#' dtQ <- process(dtQ, fredlib)
+#' LHS <- fred[series_name == "gdp constant prices"]
+#' RHS <- fred[series_name != "gdp constant prices"]
+#' dtQ <- process_MF(LHS, RHS)
+#' dt_processed <- process(dtQ, fredlib)
 process <- function(dt, lib, detrend = TRUE, center = TRUE, scale = TRUE, as_of = NULL, date_name = "ref_date", 
                     id_name = "series_name", value_name = "value", pub_date_name = NULL, 
                     ignore_numeric_names = TRUE, silent = FALSE){
@@ -297,33 +252,27 @@ process <- function(dt, lib, detrend = TRUE, center = TRUE, scale = TRUE, as_of 
     }
   }
   
-
   if(any(as.logical(lib$needs_SA))){
+    dt[ , seasonal_factor := 0]
     if("country"%in%names(lib) && "country"%in%names(dt)){
       if(ignore_numeric_names){
         dt[extract_character(series_name)%in%extract_character(lib[as.logical(needs_SA)]$series_name) & extract_character(country)%in%extract_character(lib[as.logical(needs_SA)]$country),
-           seasonal_factor := try_SA_factor(value, ref_date), by = c("country", "series_name")]
-        dt[is.na(seasonal_factor), seasonal_factor := 0]
-        dt[ , value := value - seasonal_factor]
+           seasonal_factor := try_seas_factor(value, ref_date), by = c("country", "series_name")]
       }else{
         dt[series_name%in%lib[as.logical(needs_SA)]$series_name & country%in%lib[as.logical(needs_SA)]$country,
-           seasonal_factor := try_SA_factor(value, ref_date), by = c("country", "series_name")]
-        dt[is.na(seasonal_factor), seasonal_factor := 0]
-        dt[ , value := value - seasonal_factor]
+           seasonal_factor := try_seas_factor(value, ref_date), by = c("country", "series_name")]
       }
     }else{
       if(ignore_numeric_names){
         dt[extract_character(series_name)%in%extract_character(lib[as.logical(needs_SA)]$series_name),
-           seasonal_factor := try_SA_factor(value, ref_date), by = "series_name"]
-        dt[is.na(seasonal_factor), seasonal_factor := 0]
-        dt[ , value := value - seasonal_factor]
+           seasonal_factor := try_seas_factor(value, ref_date), by = "series_name"]
       }else{
         dt[series_name%in%lib[as.logical(needs_SA)]$series_name,
-           seasonal_factor := try_SA_factor(value, ref_date), by = "series_name"]
-        dt[is.na(seasonal_factor), seasonal_factor := 0]
-        dt[ , value := value - seasonal_factor]
+           seasonal_factor := try_seas_factor(value, ref_date), by = "series_name"]
       }
     }
+    dt[is.na(seasonal_factor), seasonal_factor := 0]
+    dt[ , value := value - seasonal_factor]
   }
   
   dt[ , level_value := value]
@@ -348,120 +297,95 @@ process <- function(dt, lib, detrend = TRUE, center = TRUE, scale = TRUE, as_of 
   
   if(detrend){
     if("detrend"%in%names(lib)){ # detrend series in lib
+      dt[ , low_frequency_trend := 0]
       if("country"%in%names(lib) && "country"%in%names(dt)){
         if(ignore_numeric_names){
           dt[extract_character(series_name)%in%extract_character(lib[as.logical(detrend)]$series_name) & extract_character(country)%in%extract_character(lib[as.logical(detrend)]$country),
              low_frequency_trend := try_trend(value), by = c("country", "series_name")]
-          dt[is.na(low_frequency_trend), low_frequency_trend := 0]
-          dt[ , value := value - low_frequency_trend]
         }else{
           dt[series_name%in%lib[as.logical(detrend)]$series_name & country%in%lib[as.logical(detrend)]$country,
              low_frequency_trend := try_trend(value), by = c("country", "series_name")]
-          dt[is.na(low_frequency_trend), low_frequency_trend := 0]
-          dt[ , value := value - low_frequency_trend]
         }
       }else{ # if country not in lib and data
         if(ignore_numeric_names){
           dt[extract_character(series_name)%in%extract_character(lib[as.logical(detrend)]$series_name),
              low_frequency_trend := try_trend(value), by = "series_name"]
-          dt[is.na(low_frequency_trend), low_frequency_trend := 0]
-          dt[ , value := value - low_frequency_trend]
         }else{
           dt[series_name%in%lib[as.logical(detrend)]$series_name,
              low_frequency_trend := try_trend(value), by = "series_name"]
-          dt[is.na(low_frequency_trend), low_frequency_trend := 0]
-          dt[ , value := value - low_frequency_trend]
         }
       }
     }else{ # detrend all series
       if("country"%in%names(dt)){
         dt[ , low_frequency_trend := try_trend(value), by = c("country", "series_name")]
-        dt[ , value := value - low_frequency_trend]
       }else{
         dt[ , low_frequency_trend := try_trend(value), by = "series_name"]
-        dt[ , value := value - low_frequency_trend]
       }
     }
+    dt[is.na(low_frequency_trend), low_frequency_trend := 0]
+    dt[ , value := value - low_frequency_trend]
   }
   
   if(center){
+    dt[ , standardize_center := 0]
     if("center"%in%names(lib)){
       if("country"%in%names(lib) && "country"%in%names(dt)){
         if(ignore_numeric_names){
           dt[extract_character(series_name)%in%extract_character(lib[as.logical(center)]$series_name) & extract_character(country)%in%extract_character(lib[as.logical(center)]$country),
              standardize_center := mean_na(value), by = c("country", "series_name")]
-          dt[is.na(standardize_center), standardize_center := 0]
-          dt[ , value := value - standardize_center]
         }else{
           dt[series_name%in%lib[as.logical(center)]$series_name & country%in%lib[as.logical(center)]$country,
              standardize_center := mean_na(value), by = c("country", "series_name")]
-          dt[is.na(standardize_center), standardize_center := 0]
-          dt[ , value := value - standardize_center]
         }
       }else{ # country not a id column
         if(ignore_numeric_names){
           dt[extract_character(series_name)%in%extract_character(lib[as.logical(center)]$series_name),
              standardize_center := mean_na(value), by = "series_name"]
-          dt[is.na(standardize_center), standardize_center := 0]
-          dt[ , value := value - standardize_center]
         }else{
           dt[series_name%in%lib[as.logical(center)]$series_name,
              standardize_center := mean_na(value), by = "series_name"]
-          dt[is.na(standardize_center), standardize_center := 0]
-          dt[ , value := value - standardize_center]
         }
       }
     }else{ # center all series
       if("country"%in%names(dt)){
         dt[ , standardize_center := mean_na(value), by = c("country", "series_name")]
-        dt[is.na(standardize_center), standardize_center := 0]
-        dt[ , value := value - standardize_center]
       }else{
         dt[ , standardize_center := mean_na(value), by = "series_name"]
-        dt[is.na(standardize_center), standardize_center := 0]
-        dt[ , value := value - standardize_center]
       }
     }
+    dt[is.na(standardize_center), standardize_center := 0]
+    dt[ , value := value - standardize_center]
   }
   
   if(scale){
+    dt[ , standardize_scale := 1]
     if("scale"%in%names(lib)){
       if("country"%in%names(lib) && "country"%in%names(dt)){
         if(ignore_numeric_names){
           dt[extract_character(series_name)%in%extract_character(lib[as.logical(scale)]$series_name) & extract_character(country)%in%extract_character(lib[as.logical(scale)]$country),
              standardize_scale := sd_na(value), by = c("country", "series_name")]
-          dt[is.na(standardize_scale), standardize_scale := 1]
-          dt[ , value := value/standardize_scale]
         }else{
           dt[series_name%in%lib[as.logical(scale)]$series_name & country%in%lib[as.logical(scale)]$country,
              standardize_scale := sd_na(value), by = c("country", "series_name")]
-          dt[is.na(standardize_scale), standardize_scale := 1]
-          dt[ , value := value/standardize_scale]
         }
       }else{ # country not an id column
         if(ignore_numeric_names){
           dt[extract_character(series_name)%in%extract_character(lib[as.logical(scale)]$series_name),
              standardize_scale := sd_na(value), by = "series_name"]
-          dt[is.na(standardize_scale), standardize_scale := 1]
-          dt[ , value := value/standardize_scale]
         }else{
           dt[series_name%in%lib[as.logical(scale)]$series_name,
              standardize_scale := sd_na(value), by = "series_name"]
-          dt[is.na(standardize_scale), standardize_scale := 1]
-          dt[ , value := value/standardize_scale]
         }
       }
     }else{ # scale all series
       if("country"%in%names(dt)){
         dt[ , standardize_scale := sd_na(value), by = c("country", "series_name")]
-        dt[is.na(standardize_scale), standardize_scale := 1]
-        dt[ , value := value/standardize_scale]
       }else{
         dt[ , standardize_scale := sd_na(value), by = "series_name"]
-        dt[is.na(standardize_scale), standardize_scale := 1]
-        dt[ , value := value/standardize_scale]
       }
     }
+    dt[is.na(standardize_scale), standardize_scale := 1]
+    dt[ , value := value/standardize_scale]
   }
   return(dt)
 }
@@ -489,15 +413,17 @@ process <- function(dt, lib, detrend = TRUE, center = TRUE, scale = TRUE, as_of 
 #' argument to `process_wide()` of `detrend`, `center`, or `scale` is `FALSE`, the operation will not be performed. If `TRUE`,
 #' the function will check for the column of the same name in `lib`. If the column exists, T/F entries from this column are used
 #' to determine which series to transform. If the column does not exist, all series will be transformed. 
-#'@example
-#' dtQ <- process_MF(fred[series_name == "gdp constant prices"], fred[series_name != "gdp constant prices"]) #quarterly mixed frequency
-#' dtW <- dcast(dtQ, ref_date ~ series_name, value.var = "value")
-#' dtQ <- process(dtW, fredlib)
+#'@examples
+#' LHS <- fred[series_name == "gdp constant prices"]
+#' RHS <- fred[series_name != "gdp constant prices"]
+#' dtQ <- process_MF(LHS, RHS)
+#' dt_wide <- data.table::dcast(dtQ, ref_date ~ series_name, value.var = "value")
+#' dt_processed <- process_wide(dt_wide, fredlib)
 process_wide <- function(dt_wide, lib, detrend = TRUE, center = TRUE, scale = TRUE, date_name = "ref_date", 
                          ignore_numeric_names = TRUE, silent = FALSE){
   
-  dt <- data.table(dt)
-  setnames(dt, date_name, "ref_date")  
+  dt_wide <- data.table(dt_wide)
+  setnames(dt_wide, date_name, "ref_date")  
   dt_long <- melt(dt_wide, id.vars = "ref_date", variable.name = "series_name") # convert to long format
   
   out <- process(dt_long, lib, detrend = detrend, center = center, scale = scale, as_of = NULL, pub_date_name = NULL, 
