@@ -38,3 +38,9 @@ test_that("weekly aggregation is indexed to Friday", {
   out <- agg_to_freq(fred, frq = "week")
   expect(all(weekdays(out$ref_date)=="Friday"), "Weekly aggregation does not index to Friday")
 })
+
+test_that("seasonal adjustment is working", {
+  fred_sa <- seas_df_long(fred, sa_names = c("gdp constant prices", "advance retail sales"),
+                          x11 = TRUE, transfunc = 'auto')
+  expect(all(c("gdp constant prices sa", "advance retail sales sa")%in%unique(fred_sa$values_sa$series_name)), "SA series are missing")
+})

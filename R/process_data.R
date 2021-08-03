@@ -1,3 +1,9 @@
+# due to data.table syntax, see https://cran.r-project.org/web/packages/data.table/vignettes/datatable-importing.html
+utils::globalVariables(c(".", "LHS_index", "country", "index_of_observations", "level_value",
+                        "low_frequency_trend", "n_obs", "needs_SA", "pub_date", "ref_date",
+                        "seasonal_factor", "series_name", "standardize_center", "standardize_scale",
+                        "take_diffs", "take_logs", "value"))
+
 try_seas_factor <- function(x, dates, series_name = NULL){
   if(!can_seasonal(dates[is.finite(x)])){
     warning(paste0("Cannot seasonally adjust ", series_name, "; seasonal adjustment requires quarterly or monthly data without internal NA's"))
