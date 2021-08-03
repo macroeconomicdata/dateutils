@@ -2,9 +2,11 @@
 title: "Utilities for Tabular Time Series Data"
 author: "Seth Leonard,"
 date: "`r Sys.Date()`"
-output: pdf_document
-vignette: |
-  %\VignetteIndexEntry{Time Series Utilties} %\VignetteEngine{knitr::rmarkdown} \usepackage[utf8]{inputenc}
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Time Series Utilties}
+  %\VignetteEngine{knitr::rmarkdown}
+  \usepackage[utf8]{inputenc}
 ---
 
 
