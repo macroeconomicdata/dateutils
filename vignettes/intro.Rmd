@@ -1,10 +1,10 @@
 ---
-title: "Utilities for Tabular Time Series Data"
+title: "Introduction to dateutils"
 author: "Seth Leonard,"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Time Series Utilties}
+  %\VignetteIndexEntry{Introduction to dateutils}
   %\VignetteEngine{knitr::rmarkdown}
   \usepackage[utf8]{inputenc}
 ---

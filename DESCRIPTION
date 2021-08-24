@@ -6,7 +6,7 @@ Author: Seth Leonard
 Maintainer: Seth Leonard <seth@ottoquant.com>
 Description: Utilities for mixed frequency data. In particular, use to aggregate and normalize tabular mixed frequency data, index dates to end of period, and seasonally adjust tabular data.
 Depends: R (>= 3.5.0)
-License: MIT
+License: MIT + file LICENSE
 Suggests: 
   rmarkdown,
   knitr,

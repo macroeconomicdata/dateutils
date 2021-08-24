@@ -242,9 +242,9 @@ agg_to_freq <- function(dt_long, frq = c("month", "week", "quarter", "year"),
 }
 
 
-#' Add NA values to the tail of a data.table
+#' Add NA values to the tail of a wide data.table
 #'
-#' Add NA values to the tail of a data.table to be filled by forecasting routines
+#' Add NA values to the tail of a wide data.table to be filled by forecasting routines
 #' 
 #' @param dt data.table in wide format
 #' @param horizon number of periods to add at specified `frq`
