@@ -1,14 +1,15 @@
+
 # dateutils
 
-**dateutils** is an R package for conveniently working with time series data in tabular format, that is, without using one of the may R time series formats such as `ts` or `xts`. **dateutils** is built on top of **data.table`**.
+**dateutils** is an R package for conveniently working with time series data in tabular format, that is, without using one of the may R time series formats such as `ts` or `xts`. `dateutils` is built on top of data table.
 
 ## Non-Technical Overview
 
-The main functions of **dateutils** are for aggregating and formatting time series data, including mixed frequency data. This latter functionality is particularly useful as it allows the incorporation of mixed frequency data into standard econometric and machine learning models, without the hassle of bridge equations.
+The main functions of **dateutils** are for aggregating and formatting time series data. Advanced functions are in a separate package built on top of **dateutils** called **dataprocess**. 
 
 ## Getting Started
 
-To give a few examples of using **dateutils**, we will use the built in data.table named `fred`, containing daily (t bill spreads), weekly (initial jobless claims), monthly (advance retail sales), and quarterly (gdp) data in long format. To view the data use `View(fred)`. We can begin by aggregating this data to the lowest frequency, quarterly in this case. 
+To give a few examples of using **dateutils**, we will use the built in data.table named `fred`, containing daily (t bill sreads), weekly (intitial jobess claims), monthly (advance retail sales), and quarterly (gdp) data in long format. To view the data use `View(fred)`. We can begin by aggregating this data to the lowest frequency, quarterly in this case. 
 
 
 ```{r}
@@ -18,11 +19,11 @@ fred_quarterly <- agg_to_freq(fred, frq = "quarter")
 print(fred_quarterly[1:5])
 ```
 
-Note that dates are indexed to the end of the quarter. `agg_to_frq()` also includes the column `n_obs` giving the number of observations which were used to calculate mean values for the quarter. We could, alternatively, create a mixed frequency data set by aggregating to monthly. If we wanted the data in wide format, we could then use the **data.table** function `dcast()`, or simply call `agg_to_frq_wide()`. 
+Note that dates are indexed to the end of the quarter. `agg_to_frq()` also includes the column `n_obs` giving the number of observations which were used to calculate mean values for the quarter. We could, alternatively, create a mixed frequency data set by aggregating to monthly. If we wanted the data in wide format, we could then use the **data.table** function `dcast()`, or simply call `agg_to_frq_wide()`. We will use data since January 1st 2000 since advance retail sales has a shorter history than other series.
 
 ```{r}
-fred_monthly_wide <- agg_to_freq_wide(fred, frq = "month")
-print(fred_monthly_wide$dt[1:6])
+fred_monthly_wide <- agg_to_freq_wide(fred[ref_date >= as.Date("2000-01-01")], frq = "month")
+print(fred_monthly_wide$dt[1:12])
 ```
 
 ## Seasonal Adjustment
@@ -30,92 +31,11 @@ print(fred_monthly_wide$dt[1:6])
 **dateutils** works with the package **seasonal** to seasonally adjust monthly and quarterly data in `data.table` format. For example, suppose we wanted to seasonally adjust gdp and advance retail sales in our quarterly dataset. We can do so as follows:
 
 ```{r}
-fred_sa <- seas_df_long(fred_quarterly, sa_names = c("gdp constant prices", "advance retail sales"),
-                        transfunc = 'auto')
+fred_sa <- seas_df_long(fred_quarterly, sa_names = c("gdp constant prices", "advance retail sales"), transfunc = 'auto')
 gdp <- rbind(fred_quarterly[series_name == "gdp constant prices", .(ref_date, series_name, value)],
              fred_sa$values_sa[series_name == "gdp constant prices sa"])
 gdp <- dcast(gdp, ref_date ~ series_name, value.var = "value")
 matplot(gdp$ref_date, gdp[,-1,with=FALSE], type = 'l')
 ```
 
-Of course, these data are already seasonally adjusted, so adjusting again makes little difference. 
-
-## Mixed frequency data
-
-**dateutils** is built around handling mixed frequency data. In particular, the package allows you to easily build mixed frequency models incorporating all available information to date without worrying about bridge equations. We accomplish this by identifying the pattern of missing observations in the tail of the data, and replicating that pattern in the historical data, to generate contemporaneous right hand side (RHS) variables, as well as the usual lagged RHS variables. The resulting data set is uniform frequency, allowing the use of any of the standard statistical models available in R. We can illustrate this process again using the built in data `fred`. We will construct a nowcast of GDP, the lowest frequency variable in the data, using the other the other three monthly, weekly, and daily series. To begin, we can look at the tail of each of the four series. 
-```{r}
-tail(fred[series_name == "gdp constant prices"], 2)
-```
-The last observation we have for GDP is Q4 2020, thus our nowcast will be for Q1 2021 (the `as_of` date for this data is February 26 2021, which was a Friday). Looking next at the monthly data
-
-```{r}
-tail(fred[series_name == "advance retail sales"], 4)
-```
-In this case, our contemporaneous data will include the first month in the quarter. Lagged data (i.e. Q4 2020) is complete. Looking next at weekly data
-
-```{r}
-tail(fred[series_name == "initial jobless claims"])
-```
-Here we observe the first six weeks of the quarter for Q1 2021. And finally, for daily data
-```{r}
-tail(fred[series_name == "t bill spread 10y 3m"], 3)
-```
-We observe through February 25th, which in this case means 37 observations (values for weekends are not observed). The function `process_MF()` operates by calculating how many observations we have for the contemporaneous (nowcast, or one step ahead of the last observation of left hand side (LHS) data) period for each series in the data. In this case, since we observe the first 37 days for t bill spreads, the contemporaneous variable for t bill spreads will aggregate the first 37 observations in the historical data as well. If an early observation was missing, say the 22nd, than this observation would also be omitted when calculating historical aggregates. This contemporaneous variable will be appended with a 0 in the resulting data; the variable at one lag will be appended with a 1, and so on. If lagged periods are missing in the tail of the data the pattern of missing observations will be replicated in the same way. 
-
-We can verify this approach by running the function. 
-```{r}
-MF <- process_MF(fred[series_name == "gdp constant prices"], fred[series_name != "gdp constant prices"],
-                 LHS_lags = 3, RHS_lags = 3) 
-```
-Here we are using three lags of LHS variables and three lags of RHS varialbes. Note that data must be entered in long format. Aside from being more efficient for mixed frequency data (i.e. avoiding a lot of `NA` entries for low frequency data), this allows for backtesting by censoring data using the `as_of` argument. Required columns are `ref_date`, `series_name`, and `value`. If your data has different column names, you will have to inform the function using the arguments `date_name`, `id_name`, and `value_name`. If you wish to backtest your data using `as_of` you must also include the column `pub_date`, or inform the function which column contains publication dates using `pub_date_name`. 
-
-By default `process_MF()` returns data in long format. If you wish to have the data in matrix format, you can set `return_dt = FALSE`. Since `dateutils` is built on `data.table`, we can also transform the output to wide format as follows
-```{r}
-library(data.table)
-dt_wide <- dcast(MF, ref_date ~ series_name, value.var = "value")
-tail(dt_wide)
-```
-Checking the result for advance retail sales is simple as we are only using the first observation in the quarter. Thus for Q1 2021 it is 520162; for the first month in Q4 2020 it is 493991. `process_MF()` allows for multiple LHS variables, but all LHS variables must be the same frequency (i.e. quarterly, monthly, etc.).
-
-So far we have transformed our mixed frequency data into meaningful, up-to-date uniform frequency data. However, several series are still non-stationary. Before modeling, will will have to process these data to ensure stationarity and thereby consistent results. We can do this using the function `process()`. Instructions on how to process the data are in a library file, in this case called `fredlib`, a built in data.table.
-```{r}
-print(fredlib)
-```
-Required columns are `series_name`, `take_logs`, and `take_diffs`. Optional columns are `country`, `needs_SA`, `detrend`, `center`, and `scale`. Other columns, such as `type` in `fredlib`, are ignored. Unique identification of each series can come from `series_name` alone or `series_name` and `country` pairs. Note that when we transformed the mixed frequency data using `process_MF()` we appended series names with 0 for contemporaneous data, 1, for one lag, and so on. By default, the argument `ignore_numeric_names = TRUE` so that `process()` correctly identifies each series from the library `fredlib`. 
-```{r}
-dt_processed <- process(MF, fredlib)
-print(dt_processed[1:4])
-```
-Output from `dt_processed` includes all of the information one would need to convert data back to levels. If we had seasonally adjusted any of the series, output would also include the column `seasonal_factor`.
-
-Now that we have stationary, uniform frequency data, we can use any of the standard econometric models. For example, 
-```{r}
-X <- dcast(dt_processed, ref_date ~ series_name, value.var = "value")
-out <- lm(`gdp constant prices 0` ~ `advance retail sales 0` + 
-          `initial jobless claims 0` + `t bill spread 10y 3m 0`, data = X)
-summary(out)
-```
-
-
-## Other Functions
-
-**dateutils** additionally exports a large number of small functions which names that are hopefully self explanatory. We can see the complete list as follows:
-
-```{r}
-ls("package:dateutils")
-```
-
-As a few more examples, we can find the last date of a time period using one of the following functions:
-
-```{r}
-dates <- seq.Date(from = as.Date("2021-01-01"), to = as.Date("2021-06-30"), by = "day")
-weekvals <- end_of_period(dates, period = "week")
-unique(weekdays(weekvals))
-```
-or, to shift dates forward one month,
-
-```{r}
-monthvals <- end_of_period(dates, period = "month", shift = 1)
-unique(monthvals)
-```
-
+## Add this line just to test if I can succeed in making changes to the code and commit to the branch

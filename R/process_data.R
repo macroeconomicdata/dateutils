@@ -438,5 +438,8 @@ process_wide <- function(dt_wide, lib, detrend = TRUE, center = TRUE, scale = TR
   return(out)
 }
 
-
+have_a_try_adding <- function(x, y){
+  out <- x + y
+  return(out)
+}
 
