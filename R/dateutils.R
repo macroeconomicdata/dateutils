@@ -4,6 +4,10 @@
 #' 
 #' @param year integer year value
 #' @param month integer month value
+#' @return The number of days in the month (integer)
+#' @example 
+#' month_days(2021,9) # 30
+#' month_days(2020,2) # 29
 month_days <- function(year, month) MonthDays(year, month)
 
 #' End of period date
@@ -13,6 +17,9 @@ month_days <- function(year, month) MonthDays(year, month)
 #' @param dates Date values formatted as.Date()
 #' @param period One of `'month'`, `'week'`, `'quarter'`, `'year'`.
 #' @param shift Integer, shift date forward (positive values) or backwards (negative values) by the number of periods.
+#' @return Last day of period in as.Date() format
+#' @example 
+#' end_of_period(as.Date("2019-09-15")) # 2019-09-30
 end_of_period <- function(dates, period = c('month', 'week', 'quarter', 'year'), shift = 0){
   period <- match.arg(period)
   shift <- round(shift) # must be integer valued
@@ -21,45 +28,6 @@ end_of_period <- function(dates, period = c('month', 'week', 'quarter', 'year'),
   else if(period == 'quarter') End_of_Quarter(dates, shift)
   else if(period == 'year') return(as.Date(paste(format(dates, "%Y") + shift, "12", "31", sep = "-")))
 }
-
-
-
-# end_of_period(as.Date("2000-03-31"), period = 'quarter', shift = 3)
-
-#' End of next month date
-#'
-#' Return the date of the last day of the following month
-#' 
-#' @param date date value formated as.Date()
-end_next_month <- function(date) End_next_Month(date)
-
-#' End of  month date
-#'
-#' Return the date of the last day of the month
-#' 
-#' @param date date value formated as.Date()
-end_of_month <- function(date) End_of_Month(date)
-
-#' End of previous month date
-#'
-#' Return the date of the last day of the previous month
-#' 
-#' @param date date value formated as.Date()
-end_previous_month <- function(date) End_previous_Month(date)
-
-#' End of quarter date
-#'
-#' Return the date of the last day of the quarter
-#' 
-#' @param date date value formated as.Date()
-end_of_quarter <- function(date) End_of_Quarter(date)
-
-#' End of previous quarter date
-#'
-#' Return the date of the last day of the previous quarter
-#' 
-#' @param date date value formated as.Date()
-end_previous_quarter <- function(date) End_previous_Quarter(date)
 
 #' First of previous quarter date
 #'
