@@ -14,6 +14,9 @@ match_index_helper <- function(this, that){
 #' 
 #' @param this first object 
 #' @param that second object
+#' @return A list of indexes indicating the elements that are matched to each other
+#' @example 
+#' match_index(c(1,2,3),c(2,3,4)) # $that_idx [1] 1 2; $this_idx [1] 2 3
 match_index <- function(this, that){
   idx <- sapply(this, FUN = match_index_helper, that)
   return(list(that_idx = idx[!is.na(idx)],
@@ -26,6 +29,11 @@ match_index <- function(this, that){
 #' 
 #' @param x data 
 #' @param dates dates
+#' @return data in ts() format
+#' @example 
+#' x <- fred[fred$series_name == "gdp constant prices","value"]
+#' dates <- fred[fred$series_name == "gdp constant prices","ref_date"]
+#' to_ts(x, dates) 
 to_ts <- function(x, dates){
   dates <- as.Date(dates) #just in case we forget!
   frq <- median(diff(dates)) #measured in days
@@ -54,6 +62,9 @@ to_ts <- function(x, dates){
 #' Return a logical indicating whether data at given dates can be seasonally adjusted using seas()
 #' 
 #' @param dates dates
+#' @return A logical variable indicating whether data can be seasonally adjusted
+#' @example 
+#' can_seasonal(fred[1:10,"ref_date"]) #TRUE
 can_seasonal <- function(dates){
   dates <- as.Date(dates) #just in case we forget!
   frq <- diff(dates) #measured in days
@@ -69,6 +80,9 @@ can_seasonal <- function(dates){
 #' Transform monthly or quarterly ts() data to a dataframe
 #' 
 #' @param x ts() format data which is either monthly or quarterly
+#' @return Data in dataframe format
+#' @example 
+#' ts_to_df()
 ts_to_df <- function(x){
   ts_year   <- floor(time(x) + 1e-5)
   ts_month  <- round(12*(time(x) - ts_year)) + 1
@@ -101,6 +115,9 @@ replace_by_time <- function(old_time, new_ts){
 #' 
 #' @param old_ts timeseries data
 #' @param new_ts timeseries data
+#' @return Timeseries data in which `new_ts` corresponds to `old_ts`
+#' @example 
+#' match_ts_dates(old_ts, new_ts) #
 match_ts_dates <- function(old_ts, new_ts){
   out <- sapply(time(old_ts), FUN = replace_by_time, new_ts = new_ts)
   out <- ts(out, start = attr(old_ts, "tsp")[1], end = attr(old_ts, "tsp")[2],
@@ -117,6 +134,11 @@ match_ts_dates <- function(old_ts, new_ts){
 #' @param dates dates corresponding to data 'x'
 #' @param x11 T/F, use x11 as opposed to X-13 SEATS
 #' @param transfunc Data transformation, one of `none` for no transformation, `auto` for automatic detection, or `log` for log transformation 
+#' @return Seasonally adjusted data
+#' @example 
+#' x <- fred[fred$series_name == "gdp constant prices","value"]
+#' dates <- fred[fred$series_name == "gdp constant prices","ref_date"]
+#' run_sa(x, dates, transfunc = "log")
 run_sa <- function(x, dates, x11 = FALSE, transfunc = c("none", "auto", "log")){
   transfunc <- match.arg(transfunc) # checks and picks the first if unspecified
   x_ts <- to_ts(x, dates)
@@ -150,6 +172,9 @@ run_sa <- function(x, dates, x11 = FALSE, transfunc = c("none", "auto", "log")){
 #' @param x11 T/F, use x11 as opposed to X-13 SEATS
 #' @param transfunc Data transformation, one of `none` for no transformation, `auto` for automatic detection, or `log` for log transformation 
 #' @param series_name Include series name to print out if failure (for lapply() applications)
+#' @return Seasonally adjusted data
+#' @example 
+#' try_sa()
 try_sa <- function(x, dates, x11 = FALSE, transfunc = "none", series_name = NULL){
   out <- try(run_sa(x, dates, x11, transfunc))
   if(inherits(out, "try-error")){
@@ -168,7 +193,10 @@ try_sa <- function(x, dates, x11 = FALSE, transfunc = "none", series_name = NULL
 #' @param df wide format dataframe
 #' @param sa_cols names or column indexes of series to seasonally adjust
 #' @param x11 T/F, use x11 as opposed to X-13 SEATS
-#' @param transfunc Data transformation, one of `none` for no transformation, `auto` for automatic detection, or `log` for log transformation 
+#' @param transfunc Data transformation, one of `none` for no transformation, `auto` for automatic detection, or `log` for log transformation
+#' @return Seasonally adjusted data in wide format
+#' @example  
+#' seas_df_wide(fred[series_name == "gdp constant prices"], sa_cols="value")
 seas_df_wide <- function(df, sa_cols, x11 = FALSE, transfunc = 'none'){
   sa_list <- lapply(df[ , sa_cols, with = FALSE],  FUN = try_sa, dates = df$ref_date, x11 = x11, transfunc = transfunc)
   values_sa <- data.frame(ref_date = df$ref_date,
@@ -234,6 +262,9 @@ fill_trend_tail <- function(x){
 #' Spline fill missing observations, designed for filling low frequency trend estimates
 #' 
 #' @param x data with missing observations
+#' @return data without missing observations
+#' @example 
+#' spline_fill_trend(c(1,2,3,NA,5)) # 1 2 3 4 5
 spline_fill_trend <- function(x){
   obs <- which(is.finite(x))
   fst <- obs[1]
@@ -251,6 +282,9 @@ spline_fill_trend <- function(x){
 #' @param x data 
 #' @param outlier_rm T/F, remove outliers to estimate trends?
 #' @param span span for the loess regression
+#' @return Estimated trend in the data
+#' @example 
+#' try_trend(c(1,2,3,4,50))
 try_trend <- function(x, outlier_rm = TRUE, span = 0.6){
   trend <- try(loess(x ~ seq(length(x)), na.action = na.exclude, span = span))
   if(inherits(trend, "try-error")) return(rep(0,length(x)))
@@ -273,6 +307,9 @@ try_trend <- function(x, outlier_rm = TRUE, span = 0.6){
 #' @param x data 
 #' @param outlier_rm T/F, remove outliers to estimate trends?
 #' @param span span for the loess regression
+#' @return Data with trends removed
+#' @example 
+#' try_detrend()
 try_detrend <- function(x, outlier_rm = TRUE, span = 0.6){
   x_in <- x
   trend <- try(loess(x ~ seq(length(x)), na.action = na.exclude, span = span))

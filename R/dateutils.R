@@ -34,6 +34,9 @@ end_of_period <- function(dates, period = c('month', 'week', 'quarter', 'year'),
 #' Return the date of the first day of the previous quarter
 #' 
 #' @param date date value formated as.Date()
+#' @return The first day of the previous quarter of the date 
+#' @example 
+#' first_previous_quarter(as.Date("2019-09-15")) # 2019-04-01
 first_previous_quarter <- function(date) First_previous_Quarter(date)
 
 
@@ -42,6 +45,9 @@ first_previous_quarter <- function(date) First_previous_Quarter(date)
 #' Return the day of a Date value as an integer
 #' 
 #' @param date date value formated as.Date()
+#' @return the day of the date (integer)
+#' @example 
+#' day(as.Date("2019-09-15")) # 15
 day <- function(date) c(Day(date))
 
 #' Stack time series observations in VAR format
@@ -51,6 +57,9 @@ day <- function(date) c(Day(date))
 #' 
 #' @param Dat Data in a format convertable to a matrix
 #' @param p number of lags, integer value
+#' @return stacked time series obs, lagged by p periods
+#' @example 
+#' stack_obs(data, 2) # stack the dataset `data`, lagging 2 periods
 stack_obs <- function(Dat, p) Stack_Obs(Dat, p)
 
 #' Companion Form
@@ -58,6 +67,9 @@ stack_obs <- function(Dat, p) Stack_Obs(Dat, p)
 #' Put the transition matrix `B` into companion form 
 #' 
 #' @param B Transition matrix from a VAR model
+#' @return Companion matrix of the input matrix
+#' @example 
+#' comp_form(matrix(c(1:4), nrow = 2, byrow = TRUE)) # matrix(c(4,-2,-3,1), nrow = 2, byrow = TRUE)
 comp_form <- function(B) Comp_Form(B)
 
 #' End of Year
@@ -65,6 +77,9 @@ comp_form <- function(B) Comp_Form(B)
 #' Find the end of year for a vector of dates
 #' 
 #' @param dates Transition matrix from a VAR model
+#' @return The last day of the year for the dates
+#' @example 
+#' end_of_year(as.Date("2019-09-15")) # 2019-12-31
 end_of_year <- function(dates) End_Of_Year(dates)
 
 #' Fill Forward
@@ -72,6 +87,8 @@ end_of_year <- function(dates) End_Of_Year(dates)
 #' Fill missing observations forward using the last finite observation
 #' 
 #' @param x Transition matrix from a VAR model
+#' @return x with missing obs filled by forward value
+#' @example 
 fill_forward <- function(x) Fill_Forward(x)
 
 #' First of Quarter
@@ -79,6 +96,9 @@ fill_forward <- function(x) Fill_Forward(x)
 #' Find the first date in the quarter for a vector of dates
 #' 
 #' @param dates Transition matrix from a VAR model
+#' @return The first day of the quarter for the dates
+#' @example 
+#' first_of_quarter(as.Date("2019-9-15")) # 2019-07-01
 first_of_quarter <- function(dates) First_Of_Quarter(dates)
 
 #' Long Run Variance of a VAR
@@ -89,6 +109,7 @@ first_of_quarter <- function(dates) First_Of_Quarter(dates)
 #' @param Q Covariance of shocks
 #' @param m Number of series in the VAR
 #' @param p Number of lags in the VAR
+#' @return The variance 
 long_run_var <- function(A, Q, m, p) Long_Run_Var(A, Q, m, p)
 
 #' Dummies for Numeric Data
@@ -96,6 +117,9 @@ long_run_var <- function(A, Q, m, p) Long_Run_Var(A, Q, m, p)
 #' Create dummy variables for unique numeric values in `x`
 #' 
 #' @param x Numeric vector
+#' @return Dummy variables for each unique value in the data
+#' @example 
+#' numdum(c(3,4,5)) # dummy1/2/3 = 1 if it is 3/4/5 and 0 otherwise
 numdum <- function(x) NumDum(x)
 
 #' Rolling Max
@@ -104,6 +128,9 @@ numdum <- function(x) NumDum(x)
 #' 
 #' @param x Numeric vector
 #' @param n Integer span
+#' @return The maximum value of `x` with span `n`
+#' @example 
+#' rollmax(c(1,2,3), 2) # c(2,3,3)
 rollmax <- function(x, n) RollMax(x, n)
 
 #' Rolling Min
@@ -112,6 +139,9 @@ rollmax <- function(x, n) RollMax(x, n)
 #' 
 #' @param x Numeric vector
 #' @param n Integer span
+#' @return The minimum value of `x` with span `n`
+#' @example 
+#' rollmin(c(1,2,3),2) # 
 rollmin <- function(x, n) RollMin(x, n)
 
 #' Sample mixed frequency data from FRED
