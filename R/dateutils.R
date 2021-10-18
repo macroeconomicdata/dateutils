@@ -141,7 +141,7 @@ rollmax <- function(x, n) RollMax(x, n)
 #' @param n Integer span
 #' @return The minimum value of `x` with span `n`
 #' @example 
-#' rollmin(c(1,2,3),2) # 
+#' rollmin(c(1,2,3),2) # c(1,1,2)
 rollmin <- function(x, n) RollMin(x, n)
 
 #' Sample mixed frequency data from FRED

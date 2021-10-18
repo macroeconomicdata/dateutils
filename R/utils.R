@@ -3,6 +3,10 @@
 #' Extract numeric values from x
 #' 
 #' @param x object containing numeric (and other) values
+#' @return Numeric values from the object
+#' @example 
+#' x <- c(1,2,3,"one","two","three")
+#' extract_numeric(x) # 1,2,3,NA,NA,NA
 extract_numeric <- function(x) as.numeric(gsub("[^0-9.-]+", "", as.character(x)))
 
 #' Extract character values
@@ -10,6 +14,10 @@ extract_numeric <- function(x) as.numeric(gsub("[^0-9.-]+", "", as.character(x))
 #' Extract character values from x including space and underscore
 #' 
 #' @param x object containing character values
+#' @return Character valus from the object
+#' @example 
+#' x <- c(1,2,3,"one","two","three")
+#' extract_character(x) # ""      ""      ""      "one"   "two"   "three"
 extract_character <- function(x) trimws(gsub("([^A-Za-z _]|NA)","",as.character(x)))
 
 #' Limit Characters
@@ -18,6 +26,10 @@ extract_character <- function(x) trimws(gsub("([^A-Za-z _]|NA)","",as.character(
 #' 
 #' @param x object containing character values
 #' @param limit maximum number of characters to return
+#' @return Character values within the limit
+#' @example 
+#' x <- c(1,2,3,"one","two","three")
+#' limit_character(x,limit = 3)  # "1"   "2"   "3"   "one" "two" "thr" "TRU"
 limit_character <- function(x, limit = 100) substr(gsub("([^A-Za-z0-9 _]|NA)","",as.character(x)), 1, limit)
 
 
@@ -26,6 +38,10 @@ limit_character <- function(x, limit = 100) substr(gsub("([^A-Za-z0-9 _]|NA)",""
 #' Extract character values from x excluding space and underscore
 #' 
 #' @param x object containing character (and other) values
+#' @return Character valus without space and underscore
+#' @example 
+#' x <- c(1,2,3,"one","two","three")
+#' extract_basic_character(x)  # ""      ""      ""      "one"   "two"   "three" "true" 
 extract_basic_character <- function(x) tolower(trimws(gsub("([^A-Za-z]|NA)","",as.character(x))))
 
 #' Rows with finite values
@@ -33,6 +49,9 @@ extract_basic_character <- function(x) tolower(trimws(gsub("([^A-Za-z]|NA)","",a
 #' Return indexes of rows with at least one finite value
 #' 
 #' @param Y matrix like data object
+#' @return Indexes of rows with at least one finite value
+#' @example 
+#' any_finite(fred[1:10])
 any_finite <- function(Y) seq(NROW(Y))%in%(any_obs_cols(t(as.matrix(Y)))+1)
 
 #' Rows with only finite values
@@ -40,6 +59,9 @@ any_finite <- function(Y) seq(NROW(Y))%in%(any_obs_cols(t(as.matrix(Y)))+1)
 #' Return indexes of rows with only finite values
 #' 
 #' @param Y matrix like data object
+#' @return Indexes of rows with with only finite values
+#' @example 
+#' all_finite(fred[1:10])
 all_finite <- function(Y) seq(NROW(Y))%in%(finite_cols(t(as.matrix(Y)))+1)
 
 #' Number of finite values in a row
@@ -47,6 +69,9 @@ all_finite <- function(Y) seq(NROW(Y))%in%(finite_cols(t(as.matrix(Y)))+1)
 #' Return the number of finite values in a row of Y
 #' 
 #' @param Y matrix like data object
+#' @return The number of finite values
+#' @example 
+#' number_finite(fred[1:10])
 number_finite <- function(Y) seq(NROW(Y))%in%(count_finite(t(as.matrix(Y)))+1)
 
 #' Get from list
@@ -55,6 +80,8 @@ number_finite <- function(Y) seq(NROW(Y))%in%(count_finite(t(as.matrix(Y)))+1)
 #' 
 #' @param lst list
 #' @param what object to retrieve (by name or index)
+#' @return
+#' @example 
 get_from_list <- function(lst, what) lst[[what]]
 
 #' Convert rows to list
@@ -62,6 +89,9 @@ get_from_list <- function(lst, what) lst[[what]]
 #' Return `Y` with each row as a list
 #' 
 #' @param Y matrix like data object
+#' @return Each row as a list
+#' @example 
+#' row_to_list(fred[1:10])
 row_to_list <- function(Y) split(Y, row(Y))
 
 #' Convert columns to list
@@ -69,6 +99,9 @@ row_to_list <- function(Y) split(Y, row(Y))
 #' Return `Y` with each column as a list
 #' 
 #' @param Y matrix like data object
+#' @return Each column as a list
+#' @example 
+#' col_to_list(fred[1:10])
 col_to_list <- function(Y) split(Y, col(Y))
 
 #' Normalize daily dates in a data.table
@@ -77,6 +110,9 @@ col_to_list <- function(Y) split(Y, col(Y))
 #' 
 #' @param DT a data.table
 #' @param date_var name of date column
+#' @return Daily dates without missing
+#' @example 
+#' fill_daily_dates(fred[series_name == "gdp constant prices"], "ref_date")
 fill_daily_dates <- function(DT, date_var = "ref_date"){
   DT <- data.table(DT)
   setnames(DT, date_var, "ref_date")
@@ -89,6 +125,8 @@ fill_daily_dates <- function(DT, date_var = "ref_date"){
 #' Return the last finite observation of `x`
 #' 
 #' @param x data potentially with non-finite values
+#' @return The last finite observation
+#' last_obs(fred[series_name == "gdp constant prices", value])
 last_obs <- function(x){
   idx <- which(is.finite(x))
   if(length(idx) == 0){
@@ -104,6 +142,9 @@ last_obs <- function(x){
 #' 
 #' @param y data 
 #' @param lag number of periods for percent change
+#' @return The percentage change among the lag period
+#' @example 
+#' pct_chng(fred[series_name == "gdp constant prices", value])
 pct_chng <- function(y, lag = 1){
   y <- as.matrix(y)
   y <- (y[-seq(lag), ,drop = FALSE] - y[-seq(NROW(y)-lag+1, NROW(y)), ,drop = FALSE])/y[-seq(NROW(y)-lag+1, NROW(y)), ,drop = FALSE]
@@ -117,6 +158,9 @@ pct_chng <- function(y, lag = 1){
 #' 
 #' @param x data
 #' @param lag number of lags to use
+#' @return Differenced data
+#' @example 
+#' Diff(fred[series_name == "gdp constant prices", value],lag = 1)
 Diff <- function(x, lag = 1){ # difference but keep same number of rows
   if(is.null(dim(x))){
     out <- c(rep(NA, lag), diff(x, lag = lag))
