@@ -80,8 +80,9 @@ number_finite <- function(Y) seq(NROW(Y))%in%(count_finite(t(as.matrix(Y)))+1)
 #' 
 #' @param lst list
 #' @param what object to retrieve (by name or index)
-#' @return
+#' @return Element of the list indicated 
 #' @example 
+#' get_from_list(c(1,4,7,9,6),3) # 7
 get_from_list <- function(lst, what) lst[[what]]
 
 #' Convert rows to list
