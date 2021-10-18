@@ -28,20 +28,21 @@ match_index <- function(this, that){
 #' @param dates dates
 to_ts <- function(x, dates){
   dates <- as.Date(dates) #just in case we forget!
+  x <- as.matrix(x)
   frq <- median(diff(dates)) #measured in days
   if(frq >= 27 && frq <= 35){
     dates <- first_of_month(dates)
     sq <- seq.Date(from = dates[1], to = tail(dates,1), by = "month")
-    x_in <- rep(NA, length(sq))
+    x_in <- matrix(NA, length(sq), NCOL(x))
     idx <- match_index(dates, sq)
-    x_in[idx$that_idx] <- x[idx$this_idx]
+    x_in[idx$that_idx, ] <- x[idx$this_idx, ]
     x <- ts(x_in, start = c(year(dates[1]), month(dates[1])), frequency = 12)
   }else if(frq >= 88 && frq <= 94){
     dates <- first_of_quarter(dates)
     sq <- seq.Date(from = dates[1], to = tail(dates,1), by = "quarter")
-    x_in <- rep(NA, length(sq))
+    x_in <- matrix(NA, length(sq), NCOL(x))
     idx <- match_index(dates, sq)
-    x_in[idx$that_idx] <- x[idx$this_idx]
+    x_in[idx$that_idx, ] <- x[idx$this_idx, ]
     x <- ts(x_in, start = c(year(dates[1]), quarter(dates[1])), frequency = 4)
   }else{
     stop("Data must be either monthly or quarterly")
