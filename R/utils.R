@@ -206,33 +206,33 @@ agg_to_freq <- function(dt_long, frq = c("month", "week", "quarter", "year"),
     dt_out <- merge(dt_out, nobs_out, by = c("ref_date", "series_name"))
   }else if(frq == "month"){
     dt_out <- dt_long[ , mean_na(value),
-                       by = .(series_name, end_of_month(ref_date))]
+                       by = .(series_name, end_of_period(ref_date))]
     nobs_out <- dt_long[ , sum(is.finite(value)),
-                       by = .(series_name, end_of_month(ref_date))]
+                       by = .(series_name, end_of_period(ref_date))]
     setnames(dt_out, "V1", "value")
-    setnames(dt_out, "end_of_month", "ref_date")
+    setnames(dt_out, "end_of_period", "ref_date")
     setnames(nobs_out, "V1", "n_obs")
-    setnames(nobs_out, "end_of_month", "ref_date")
+    setnames(nobs_out, "end_of_period", "ref_date")
     dt_out <- merge(dt_out, nobs_out, by = c("ref_date", "series_name"))
   }else if(frq == "quarter"){
     dt_out <- dt_long[ , mean_na(value),
-                       by = .(series_name, end_of_quarter(ref_date))]
+                       by = .(series_name, end_of_period(ref_date, period = "quarter"))]
     nobs_out <- dt_long[ , sum(is.finite(value)),
-                       by = .(series_name, end_of_quarter(ref_date))]
+                       by = .(series_name, end_of_period(ref_date, period = "quarter"))]
     setnames(dt_out, "V1", "value")
-    setnames(dt_out, "end_of_quarter", "ref_date")
+    setnames(dt_out, "end_of_period", "ref_date")
     setnames(nobs_out, "V1", "n_obs")
-    setnames(nobs_out, "end_of_quarter", "ref_date")
+    setnames(nobs_out, "end_of_period", "ref_date")
     dt_out <- merge(dt_out, nobs_out, by = c("ref_date", "series_name"))
   }else if(frq == "year"){
     dt_out <- dt_long[ , mean_na(value),
-                       by = .(series_name, end_of_year(ref_date))]
+                       by = .(series_name, end_of_period(ref_date, period = "year"))]
     nobs_out <- dt_long[ , sum(is.finite(value)),
-                       by = .(series_name, end_of_year(ref_date))]
+                       by = .(series_name, end_of_period(ref_date, period = "year"))]
     setnames(dt_out, "V1", "value")
-    setnames(dt_out, "end_of_year", "ref_date")
+    setnames(dt_out, "end_of_period", "ref_date")
     setnames(nobs_out, "V1", "n_obs")
-    setnames(nobs_out, "end_of_year", "ref_date")
+    setnames(nobs_out, "end_of_period", "ref_date")
     dt_out <- merge(dt_out, nobs_out, by = c("ref_date", "series_name"))
   }
   dt_out <- dt_out[n_obs >= 1] #drop missing obs in long format

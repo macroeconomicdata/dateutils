@@ -70,19 +70,21 @@ can_seasonal <- function(dates){
 #' Transform monthly or quarterly ts() data to a dataframe
 #' 
 #' @param x ts() format data which is either monthly or quarterly
-ts_to_df <- function(x){
+ts_to_df <- function(x, end_period = TRUE){
   ts_year   <- floor(time(x) + 1e-5)
   ts_month  <- round(12*(time(x) - ts_year)) + 1
   ts_date   <- as.Date(paste(as.character(ts_year),ts_month,"01", sep = "-"))
   frq <- median(diff(ts_date))
-  if(frq >= 27 && frq <= 35){
-    ts_date   <- end_of_month(ts_date)
-  }else if(all(frq >= 89 & frq <= 94)){
-    ts_date <- end_of_quarter(ts_date)
-  }else{
-    stop("Frequency is not monthly or quarterly")
+  if(end_period){
+    if(frq >= 27 && frq <= 35){
+      ts_date   <- end_of_period(ts_date)
+    }else if(all(frq >= 89 & frq <= 94)){
+      ts_date <- end_of_period(ts_date, period = "quarter")
+    }else{
+      stop("Frequency is not monthly or quarterly")
+    }
   }
-  df        <- data.frame("ref_date" = ts_date, "value" = unclass(x))
+  df        <- data.frame("ref_date" = ts_date, unclass(x))
   return(df)
 }
 
