@@ -54,6 +54,9 @@ pct_total <- function(dt, col_name){
 #' @param col_name name of column containing responses
 #' @param by frequency of response aggregation, one of `"month"`, `"quarter"`, `"week"`
 #' @param date_name name of column containing dates 
+#' @return The percent of responses at the frequency
+#' @example 
+#' pct_response(fred[series_name == "gdp constant prices"], col_name = "value", by = "quarter")
 pct_response <- function(dt, col_name = NULL, by = c("month", "quarter", "week"), date_name = "ref_date"){
   dt <- data.table(dt)
   setnames(dt, date_name, "ref_date")
@@ -88,6 +91,9 @@ pct_response <- function(dt, col_name = NULL, by = c("month", "quarter", "week")
 #' @param col_name name of column containing responses
 #' @param by frequency of response aggregation, one of `"month"`, `"quarter"`, `"week"`
 #' @param date_name name of column containing dates 
+#' @return The number of responses at the frequency
+#' @example 
+#' total_response(fred[series_name == "gdp constant prices"], col_name = "value", by = "quarter")
 total_response <- function(dt, col_name = NULL, by = "month", date_name = "ref_date"){
   dt <- data.table(dt)
   setnames(dt, date_name, "ref_date")

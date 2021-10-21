@@ -3,6 +3,10 @@
 #' Extract numeric values from x
 #' 
 #' @param x object containing numeric (and other) values
+#' @return Numeric values from the object
+#' @example 
+#' x <- c(1,2,3,"one","two","three")
+#' extract_numeric(x) # 1,2,3,NA,NA,NA
 extract_numeric <- function(x) as.numeric(gsub("[^0-9.-]+", "", as.character(x)))
 
 #' Extract character values
@@ -10,6 +14,10 @@ extract_numeric <- function(x) as.numeric(gsub("[^0-9.-]+", "", as.character(x))
 #' Extract character values from x including space and underscore
 #' 
 #' @param x object containing character values
+#' @return Character valus from the object
+#' @example 
+#' x <- c(1,2,3,"one","two","three")
+#' extract_character(x) # ""      ""      ""      "one"   "two"   "three"
 extract_character <- function(x) trimws(gsub("([^A-Za-z _]|NA)","",as.character(x)))
 
 #' Limit Characters
@@ -18,6 +26,10 @@ extract_character <- function(x) trimws(gsub("([^A-Za-z _]|NA)","",as.character(
 #' 
 #' @param x object containing character values
 #' @param limit maximum number of characters to return
+#' @return Character values within the limit
+#' @example 
+#' x <- c(1,2,3,"one","two","three")
+#' limit_character(x,limit = 3)  # "1"   "2"   "3"   "one" "two" "thr" "TRU"
 limit_character <- function(x, limit = 100) substr(gsub("([^A-Za-z0-9 _]|NA)","",as.character(x)), 1, limit)
 
 
@@ -26,6 +38,10 @@ limit_character <- function(x, limit = 100) substr(gsub("([^A-Za-z0-9 _]|NA)",""
 #' Extract character values from x excluding space and underscore
 #' 
 #' @param x object containing character (and other) values
+#' @return Character valus without space and underscore
+#' @example 
+#' x <- c(1,2,3,"one","two","three")
+#' extract_basic_character(x)  # ""      ""      ""      "one"   "two"   "three" "true" 
 extract_basic_character <- function(x) tolower(trimws(gsub("([^A-Za-z]|NA)","",as.character(x))))
 
 #' Rows with finite values
@@ -33,6 +49,9 @@ extract_basic_character <- function(x) tolower(trimws(gsub("([^A-Za-z]|NA)","",a
 #' Return indexes of rows with at least one finite value
 #' 
 #' @param Y matrix like data object
+#' @return Indexes of rows with at least one finite value
+#' @example 
+#' any_finite(fred[1:10])
 any_finite <- function(Y) seq(NROW(Y))%in%(any_obs_cols(t(as.matrix(Y)))+1)
 
 #' Rows with only finite values
@@ -40,6 +59,9 @@ any_finite <- function(Y) seq(NROW(Y))%in%(any_obs_cols(t(as.matrix(Y)))+1)
 #' Return indexes of rows with only finite values
 #' 
 #' @param Y matrix like data object
+#' @return Indexes of rows with with only finite values
+#' @example 
+#' all_finite(fred[1:10])
 all_finite <- function(Y) seq(NROW(Y))%in%(finite_cols(t(as.matrix(Y)))+1)
 
 #' Number of finite values in a row
@@ -47,6 +69,9 @@ all_finite <- function(Y) seq(NROW(Y))%in%(finite_cols(t(as.matrix(Y)))+1)
 #' Return the number of finite values in a row of Y
 #' 
 #' @param Y matrix like data object
+#' @return The number of finite values
+#' @example 
+#' number_finite(fred[1:10])
 number_finite <- function(Y) seq(NROW(Y))%in%(count_finite(t(as.matrix(Y)))+1)
 
 #' Get from list
@@ -55,6 +80,9 @@ number_finite <- function(Y) seq(NROW(Y))%in%(count_finite(t(as.matrix(Y)))+1)
 #' 
 #' @param lst list
 #' @param what object to retrieve (by name or index)
+#' @return Element of the list indicated 
+#' @example 
+#' get_from_list(c(1,4,7,9,6),3) # 7
 get_from_list <- function(lst, what) lst[[what]]
 
 #' Convert rows to list
@@ -62,6 +90,9 @@ get_from_list <- function(lst, what) lst[[what]]
 #' Return `Y` with each row as a list
 #' 
 #' @param Y matrix like data object
+#' @return Each row as a list
+#' @example 
+#' row_to_list(fred[1:10])
 row_to_list <- function(Y) split(Y, row(Y))
 
 #' Convert columns to list
@@ -69,6 +100,9 @@ row_to_list <- function(Y) split(Y, row(Y))
 #' Return `Y` with each column as a list
 #' 
 #' @param Y matrix like data object
+#' @return Each column as a list
+#' @example 
+#' col_to_list(fred[1:10])
 col_to_list <- function(Y) split(Y, col(Y))
 
 #' Normalize daily dates in a data.table
@@ -77,6 +111,9 @@ col_to_list <- function(Y) split(Y, col(Y))
 #' 
 #' @param DT a data.table
 #' @param date_var name of date column
+#' @return Daily dates without missing
+#' @example 
+#' fill_daily_dates(fred[series_name == "gdp constant prices"], "ref_date")
 fill_daily_dates <- function(DT, date_var = "ref_date"){
   DT <- data.table(DT)
   setnames(DT, date_var, "ref_date")
@@ -89,6 +126,8 @@ fill_daily_dates <- function(DT, date_var = "ref_date"){
 #' Return the last finite observation of `x`
 #' 
 #' @param x data potentially with non-finite values
+#' @return The last finite observation
+#' last_obs(fred[series_name == "gdp constant prices", value])
 last_obs <- function(x){
   idx <- which(is.finite(x))
   if(length(idx) == 0){
@@ -104,6 +143,9 @@ last_obs <- function(x){
 #' 
 #' @param y data 
 #' @param lag number of periods for percent change
+#' @return The percentage change among the lag period
+#' @example 
+#' pct_chng(fred[series_name == "gdp constant prices", value])
 pct_chng <- function(y, lag = 1){
   y <- as.matrix(y)
   y <- (y[-seq(lag), ,drop = FALSE] - y[-seq(NROW(y)-lag+1, NROW(y)), ,drop = FALSE])/y[-seq(NROW(y)-lag+1, NROW(y)), ,drop = FALSE]
@@ -117,6 +159,9 @@ pct_chng <- function(y, lag = 1){
 #' 
 #' @param x data
 #' @param lag number of lags to use
+#' @return Differenced data
+#' @example 
+#' Diff(fred[series_name == "gdp constant prices", value],lag = 1)
 Diff <- function(x, lag = 1){ # difference but keep same number of rows
   if(is.null(dim(x))){
     out <- c(rep(NA, lag), diff(x, lag = lag))
@@ -156,6 +201,9 @@ index_by_friday <- function(dates){
 #' Return the mean of `x`. If no observations, return `NA`. This is a workaround for the fact that in data.table, `:= mean(x, na.rm = TRUE)` will return `NaN` where there are no observations
 #' 
 #' @param x data potentially with non-finite values
+#' @return Mean of the input
+#' @example 
+#' mean_na(c(1,2,3,7,9)) # 4.4
 mean_na <- function(x) if(all(!is.finite(x))) return(as.double(NA)) else return(as.double(mean(x, na.rm = T)))
 
 #' Return the standard deviation
@@ -163,6 +211,9 @@ mean_na <- function(x) if(all(!is.finite(x))) return(as.double(NA)) else return(
 #' Return the standard deviation of `x`. If no observations, return `NA`. This is a workaround for the fact that in data.table, `:= sd(x, na.rm = TRUE)` will return `NaN` where there are no observations
 #' 
 #' @param x data potentially with non-finite values
+#' @return Standard deviation of the input
+#' @example 
+#' sd_na(c(1,2,3)) # 1
 sd_na <- function(x) if(all(!is.finite(x))) return(as.double(NA)) else return(as.double(sd(x, na.rm = T)))
 
 #' Return the sum
@@ -170,6 +221,9 @@ sd_na <- function(x) if(all(!is.finite(x))) return(as.double(NA)) else return(as
 #' Return the sum of `x`. If no observations, return `NA`. This is a workaround for the fact that in data.table, `:= sum()` will return `NaN` where there are no observations
 #' 
 #' @param x data potentially with non-finite values
+#' @return Sum of the input
+#' @example 
+#' sum_na(c(1,2,3)) # 6
 sum_na <- function(x) if(all(!is.finite(x))) return(as.double(NA)) else return(as.double(sum(x, na.rm = T)))
 
 
@@ -182,6 +236,9 @@ sum_na <- function(x) if(all(!is.finite(x))) return(as.double(NA)) else return(a
 #' @param date_name name of date column
 #' @param id_name name of id column
 #' @param value_name name of value column
+#' @return Aggregated data at specified frequency in long format
+#' @example 
+#' agg_to_freq(fred[series_name == "gdp constant prices"], frq = "year")
 agg_to_freq <- function(dt_long, frq = c("month", "week", "quarter", "year"),
                         date_name = "ref_date", id_name = "series_name", value_name = "value"){
                         
@@ -250,6 +307,9 @@ agg_to_freq <- function(dt_long, frq = c("month", "week", "quarter", "year"),
 #' @param horizon number of periods to add at specified `frq`
 #' @param frq frequency for aggregation, one of `"month"`, `"week"`, `"quarter"`, or `"year"`
 #' @param date_name name of date column
+#' @return NA-filled data.table in wide format
+#' @example 
+#' add_forecast_dates(fred[series_name == "gdp constant prices"],frq="quarter")
 add_forecast_dates <- function(dt, horizon = 1, frq = c("month", "week", "quarter", "year"), date_name = "ref_date"){
   frq <- match.arg(frq)
   setnames(dt, date_name, "ref_date")
@@ -280,6 +340,9 @@ add_forecast_dates <- function(dt, horizon = 1, frq = c("month", "week", "quarte
 #' Return the number of finite observations in `x`
 #' 
 #' @param x data vector
+#' @return The Number of observations
+#' @example 
+#' count_obs(c(1,3,5,7,9)) # 5
 count_obs <- function(x) as.integer(sum(is.finite(x)))
 
 #' Last date in the week
@@ -287,6 +350,11 @@ count_obs <- function(x) as.integer(sum(is.finite(x)))
 #' Return the latest date in each week for the values in `dates`
 #' 
 #' @param dates A sequence of dates in `as.Date()` format
+#' @return Last day of each week
+#' @example 
+#' dates <- seq.Date(from = as.Date("2020-09-21"),
+#'                   by = "day", length.out = 10)
+#' last_in_week(dates)
 last_in_week <- function(dates){
   dates <- data.table("ref_date" = dates)
   out <- dates[ , max(ref_date), by = index_by_friday(ref_date)]
@@ -298,6 +366,11 @@ last_in_week <- function(dates){
 #' Return the latest date in each month for the values in `dates`
 #' 
 #' @param dates A sequence of dates in `as.Date()` format
+#' @return Last day of each month
+#' @example 
+#' dates <- seq.Date(from = as.Date("2020-09-11"),
+#'                   by = "day", length.out = 10)
+#' last_in_month(dates)
 last_in_month <- function(dates){
   dates <- data.table("ref_date" = dates)
   out <- dates[ , max(ref_date), by = end_of_month(ref_date)]
@@ -309,6 +382,11 @@ last_in_month <- function(dates){
 #' Return the first day of the month for each date in `dates`
 #' 
 #' @param dates A sequence of dates in `as.Date()` format
+#' @return First day of the month
+#' @example 
+#' dates <- seq.Date(from = as.Date("2020-09-11"),
+#'                   by = "day", length.out = 10)
+#' first_of_month(dates)
 first_of_month <- function(dates) as.Date(paste(year(dates), month(dates), 01, sep = "-"))
 
 #' Last date in the week
@@ -316,6 +394,11 @@ first_of_month <- function(dates) as.Date(paste(year(dates), month(dates), 01, s
 #' Return the latest date in the quarter fop the values in `dates`
 #' 
 #' @param dates A sequence of dates in `as.Date()` format
+#' @return Last day of the quarter
+#' @example 
+#' dates <- seq.Date(from = as.Date("2020-09-11"),
+#'                   by = "day", length.out = 10)
+#' last_in_quarter(dates)
 last_in_quarter <- function(dates){
   dates <- data.table("ref_date" = dates)
   out <- dates[ , max(ref_date), by = end_of_quarter(ref_date)]
@@ -327,6 +410,11 @@ last_in_quarter <- function(dates){
 #' Return the latest date in each year for the values in `dates`
 #' 
 #' @param dates A sequence of dates in `as.Date()` format
+#' @return Last day of the year
+#' @example 
+#' dates <- seq.Date(from = as.Date("2020-09-11"),
+#'                   by = "day", length.out = 10)
+#' last_in_year(dates)
 last_in_year <- function(dates){
   dates <- data.table("ref_date" = dates)
   out <- dates[ , max(ref_date), by = year(ref_date)]
@@ -346,6 +434,9 @@ last_in_year <- function(dates){
 #' @param id_name name of id column
 #' @param value_name name of value column
 #' @param dt_is_wide T/F, is input data `dt` in wide format
+#' @return Aggregated data at specificed frequency in wide format
+#' @example 
+#' agg_to_freq_wide(fred,frq="month")
 agg_to_freq_wide <- function(dt, date_name = "ref_date",  frq = c("month", "week", "quarter", "year"), id_name = "series_name",
                              value_name = "value", dt_is_wide = FALSE){
   frq <- match.arg(frq)
@@ -381,6 +472,9 @@ agg_to_freq_wide <- function(dt, date_name = "ref_date",  frq = c("month", "week
 #' Return a logical indicating if all elements are `NA`
 #' 
 #' @param x data vector
+#' @return A logical variable indicating all elements are 'NA'
+#' @example 
+#' allNA(c(1,2,3,4,5)) # FALSE
 allNA <- function(x) all(is.na(x))
 
 #' Find element of this_in that
@@ -389,6 +483,11 @@ allNA <- function(x) all(is.na(x))
 #' 
 #' @param that first object
 #' @param this_in second object
+#' @return Logical variables indicating whether the element exists in both objects
+#' @example 
+#' that <- seq.Date(from = as.Date("2020-09-15"), by = "day", length.out = 10)
+#' this_in <- seq.Date(from = as.Date("2020-09-11"), by = "day", length.out = 10)
+#' is_in(that, this_in)
 is_in <- function(that, this_in) this_in%in%that
 
 
@@ -398,6 +497,9 @@ is_in <- function(that, this_in) this_in%in%that
 #' 
 #' @param x data vector
 #' @param n span of rolling mean
+#' @return Rolling mean of the input
+#' @example 
+#' rollmean(c(1,2,3),2) # 1.5 2,5 2
 rollmean <- function(x, n){
   y <- rollmean_cpp(x,n)
   y[!is.finite(y)] <- NA
@@ -410,6 +512,10 @@ rollmean <- function(x, n){
 #'
 #' @param x data, potentially with missing observations
 #' @param dates corresponding dates in `as.Date()` format
+#' @return The frequency of the data
+#' @example 
+#' dates <- as.Date(c("2020-1-1", "2020-2-1", "2020-3-1", "2020-4-1"))
+#' get_data_frq(c(1,2,3,4), dates) # "month"
 get_data_frq <- function(x = NULL, dates){
   if(is.null(x)){
     ddates <- median(diff(dates))
@@ -438,6 +544,9 @@ get_data_frq <- function(x = NULL, dates){
 #' 
 #' @param dt wide format data.table
 #' @param date_name name of column containing dates in `as.Date()` format
+#' @return Data at weekly frequency
+#' @example 
+#' format_weekly(fred[series_name == "initial jobless claims"], date_name = "ref_date")
 format_weekly <- function(dt, date_name = "ref_date"){
   dt <- data.table(dt)
   allnames <- names(dt)[-1]
