@@ -9,6 +9,12 @@ extract_basic_character(x)
 \arguments{
 \item{x}{object containing character (and other) values}
 }
+\value{
+Character values without space and underscore
+}
 \description{
 Extract character values from x excluding space and underscore
+}
+\examples{
+extract_basic_character(c("this_1one", "abc123"))  ## c("thisone", "abc123)
 }

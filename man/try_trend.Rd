@@ -13,6 +13,12 @@ try_trend(x, outlier_rm = TRUE, span = 0.6)
 
 \item{span}{span for the loess regression}
 }
+\value{
+Estimated trend in the data
+}
 \description{
 Estimate low frequency trends via loess regression. If the function errors, return zeros (i.e. no trend)
+}
+\examples{
+try_trend(c(1,3,6,7,9,11,14,15,17,18))
 }

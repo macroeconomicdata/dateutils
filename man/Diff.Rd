@@ -11,6 +11,12 @@ Diff(x, lag = 1)
 
 \item{lag}{number of lags to use}
 }
+\value{
+Differenced data
+}
 \description{
 Wrapper for `diff()` maintaining the same number of observations in `x`
+}
+\examples{
+Diff(c(100,50,100,20,100,110))
 }

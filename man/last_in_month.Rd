@@ -9,6 +9,14 @@ last_in_month(dates)
 \arguments{
 \item{dates}{A sequence of dates in `as.Date()` format}
 }
+\value{
+Last day of each month
+}
 \description{
 Return the latest date in each month for the values in `dates`
+}
+\examples{
+dates <- seq.Date(from = as.Date("2020-09-11"),
+                  by = "day", length.out = 10)
+last_in_month(dates)
 }

@@ -9,6 +9,12 @@ first_of_quarter(dates)
 \arguments{
 \item{dates}{Transition matrix from a VAR model}
 }
+\value{
+The first day of the quarter for the dates
+}
 \description{
 Find the first date in the quarter for a vector of dates
+}
+\examples{
+first_of_quarter(as.Date("2019-9-15")) ## 2019-07-01
 }

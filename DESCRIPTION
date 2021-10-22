@@ -1,8 +1,13 @@
 Package: dateutils
 Type: Package
 Title: Date Utils
-Version: 0.1.3
-Author: Seth Leonard
+Version: 0.1.4
+Authors@R: c(person("Seth", "Leonard", role = c("aut", "cre"),
+                     email = "seth@ottoquant.com"),
+              person("Jiancong", "Liu", role = "ctb",
+                     email = "jiancong.liu@phd.unibocconi.it"))
+Author: Seth Leonard [aut, cre],
+        Jiancong Liu [ctb]
 Maintainer: Seth Leonard <seth@ottoquant.com>
 Description: Utilities for mixed frequency data. In particular, use to aggregate and normalize tabular mixed frequency data, index dates to end of period, and seasonally adjust tabular data.
 Depends: R (>= 3.5.0)
@@ -20,3 +25,5 @@ RoxygenNote: 7.1.1
 LazyData: true
 Encoding: UTF-8
 VignetteBuilder: knitr, rmarkdown
+URL: https://github.com/macroeconomicdata/dateutils
+BugReports: https://github.com/macroeconomicdata/dateutils/issues

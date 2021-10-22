@@ -9,6 +9,12 @@ extract_character(x)
 \arguments{
 \item{x}{object containing character values}
 }
+\value{
+Character valus from the object
+}
 \description{
 Extract character values from x including space and underscore
+}
+\examples{
+extract_character(c("this_1one", "abc123")) ## c("this_one", "abc")
 }

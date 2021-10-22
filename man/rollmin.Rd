@@ -11,6 +11,12 @@ rollmin(x, n)
 
 \item{n}{Integer span}
 }
+\value{
+The minimum value of `x` with span `n`
+}
 \description{
 Find the rolling minimum in `x` with span `n`
+}
+\examples{
+rollmin(c(1,2,3),2) ## c(1,1,2)
 }

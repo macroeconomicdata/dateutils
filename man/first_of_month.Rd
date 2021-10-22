@@ -9,6 +9,14 @@ first_of_month(dates)
 \arguments{
 \item{dates}{A sequence of dates in `as.Date()` format}
 }
+\value{
+First day of the month
+}
 \description{
 Return the first day of the month for each date in `dates`
+}
+\examples{
+dates <- seq.Date(from = as.Date("2020-09-11"),
+                  by = "day", length.out = 10)
+first_of_month(dates)
 }

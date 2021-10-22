@@ -9,6 +9,12 @@ allNA(x)
 \arguments{
 \item{x}{data vector}
 }
+\value{
+A logical variable indicating all elements are 'NA'
+}
 \description{
 Return a logical indicating if all elements are `NA`
+}
+\examples{
+allNA(c(NA, NA, 1, NA)) ## FALSE
 }

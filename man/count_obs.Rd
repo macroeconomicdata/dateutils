@@ -9,6 +9,12 @@ count_obs(x)
 \arguments{
 \item{x}{data vector}
 }
+\value{
+The Number of observations
+}
 \description{
 Return the number of finite observations in `x`
+}
+\examples{
+count_obs(c(1,3,5,7,9,NA)) # 5
 }

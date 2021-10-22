@@ -11,6 +11,12 @@ rollmax(x, n)
 
 \item{n}{Integer span}
 }
+\value{
+The maximum value of `x` with span `n`
+}
 \description{
 Find the rolling maximum in `x` with span `n`
+}
+\examples{
+rollmax(c(1,2,3), 2) ## c(2,3,3)
 }

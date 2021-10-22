@@ -1,7 +1,7 @@
 
 
 pct_by_month <- function(response, dt){
-  out <- dt[ , sum(value == response)/.N, by = end_of_month(ref_date)]
+  out <- dt[ , sum(value == response)/.N, by = end_of_period(ref_date)]
   names(out) <- c("ref_date", response)
   return(out)
 }  
@@ -13,14 +13,14 @@ pct_by_week <- function(response, dt){
 }  
 
 pct_by_quarter <- function(response, dt){
-  out <- dt[ , sum(value == response)/.N, by = end_of_quarter(ref_date)]
+  out <- dt[ , sum(value == response)/.N, by = end_of_period(ref_date, period = "quarter")]
   names(out) <- c("ref_date", response)
   return(out)
 }  
 
 
 tot_by_month <- function(response, dt){
-  out <- dt[ , sum(value == response), by = end_of_month(ref_date)]
+  out <- dt[ , sum(value == response), by = end_of_period(ref_date)]
   names(out) <- c("ref_date", response)
   return(out)
 }  
@@ -32,7 +32,7 @@ tot_by_week <- function(response, dt){
 }  
 
 tot_by_quarter <- function(response, dt){
-  out <- dt[ , sum(value == response), by = end_of_quarter(ref_date)]
+  out <- dt[ , sum(value == response), by = end_of_period(ref_date)]
   names(out) <- c("ref_date", response)
   return(out)
 }  
@@ -55,10 +55,15 @@ pct_total <- function(dt, col_name){
 #' @param by frequency of response aggregation, one of `"month"`, `"quarter"`, `"week"`
 #' @param date_name name of column containing dates 
 #' @return The percent of responses at the frequency
-#' @example 
-#' pct_response(fred[series_name == "gdp constant prices"], col_name = "value", by = "quarter")
+#' 
+#' @examples
+#' dt <- data.frame("ref_date" = seq.Date(as.Date("2000-01-01"), length.out = 100, by = "week"),
+#'                  "response" = c(rep("yes", 20), rep("no",50),rep("yes",30)))
+#' out <- pct_response(dt, col_name = "response")
+
 pct_response <- function(dt, col_name = NULL, by = c("month", "quarter", "week"), date_name = "ref_date"){
   dt <- data.table(dt)
+  by <- match.arg(by)
   setnames(dt, date_name, "ref_date")
   setcolorder(dt, "ref_date")
   if(NCOL(dt)!=2){
@@ -92,10 +97,14 @@ pct_response <- function(dt, col_name = NULL, by = c("month", "quarter", "week")
 #' @param by frequency of response aggregation, one of `"month"`, `"quarter"`, `"week"`
 #' @param date_name name of column containing dates 
 #' @return The number of responses at the frequency
-#' @example 
-#' total_response(fred[series_name == "gdp constant prices"], col_name = "value", by = "quarter")
-total_response <- function(dt, col_name = NULL, by = "month", date_name = "ref_date"){
+#' 
+#' @examples
+#' dt <- data.frame("ref_date" = seq.Date(as.Date("2000-01-01"), length.out = 100, by = "week"),
+#'                  "response" = c(rep("yes", 20), rep("no",50),rep("yes",30)))
+#' out <- total_response(dt, col_name = "response")
+total_response <- function(dt, col_name = NULL, by = c("month", "quarter", "week"), date_name = "ref_date"){
   dt <- data.table(dt)
+  by <- match.arg(by)
   setnames(dt, date_name, "ref_date")
   setcolorder(dt, "ref_date")
   if(NCOL(dt)!=2){

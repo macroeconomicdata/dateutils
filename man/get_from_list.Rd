@@ -11,6 +11,12 @@ get_from_list(lst, what)
 
 \item{what}{object to retrieve (by name or index)}
 }
+\value{
+Element of the list indicated
+}
 \description{
 Retrieve object `what` from `lst`
+}
+\examples{
+get_from_list(list("a" = "alpha", "b" = c(1,2,3)), "a") # "alpha"
 }

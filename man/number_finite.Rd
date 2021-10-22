@@ -2,13 +2,21 @@
 % Please edit documentation in R/utils.R
 \name{number_finite}
 \alias{number_finite}
-\title{Number of finite values in a row}
+\title{Number of finite values in a column}
 \usage{
 number_finite(Y)
 }
 \arguments{
 \item{Y}{matrix like data object}
 }
+\value{
+The number of finite values per column
+}
 \description{
-Return the number of finite values in a row of Y
+Return the number of finite values in a column of Y
+}
+\examples{
+X <- matrix(1,10,2)
+X[3,1] <- NA
+number_finite(X)
 }

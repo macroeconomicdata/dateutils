@@ -62,7 +62,7 @@ arma::uvec count_finite(arma::mat X){
   uvec id;
   uvec rtrn(T, fill::zeros);
   for(uword j=0; j<T; j++){
-    x = X.col(j-1);
+    x = X.col(j);
     id = find_finite(x);
     rtrn(j) = id.n_elem;
   }

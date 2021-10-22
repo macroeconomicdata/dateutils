@@ -18,7 +18,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 # Non-Technical Overview
 
-The main functions of **dateutils** are for aggregating and formatting time series data, including mixed frequency data. This latter functionality is particularly useful as it allows the incorporation of mixed frequency data into standard econometric and machine learning models, without the hassle of bridge equations.
+The main functions of **dateutils** are for aggregating and formatting time series data, including mixed frequency data. This latter functionality is particularly useful as it allows the incorporation of mixed frequency data into standard econometric and machine learning models, without the hassle of explicit bridge equations.
 
 # Getting Started
 

@@ -11,6 +11,14 @@ match_ts_dates(old_ts, new_ts)
 
 \item{new_ts}{timeseries data}
 }
+\value{
+Timeseries data in which `new_ts` corresponds to `old_ts`
+}
 \description{
 Find values in `new_ts` that correspond to dates in `old_ts`
+}
+\examples{
+old_ts <- ts(c(1,2,3,4), start=c(2020,1), end=c(2020,4), frequency=4) 
+new_ts <- ts(c(5,6,3,4), start=c(2019,4), end=c(2020,3), frequency=4) 
+match_ts_dates(old_ts, new_ts) 
 }

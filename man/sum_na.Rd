@@ -9,6 +9,12 @@ sum_na(x)
 \arguments{
 \item{x}{data potentially with non-finite values}
 }
+\value{
+Sum of the input
+}
 \description{
 Return the sum of `x`. If no observations, return `NA`. This is a workaround for the fact that in data.table, `:= sum()` will return `NaN` where there are no observations
+}
+\examples{
+sum_na(c(1,2,3,NA)) # 6
 }

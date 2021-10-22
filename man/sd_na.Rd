@@ -9,6 +9,12 @@ sd_na(x)
 \arguments{
 \item{x}{data potentially with non-finite values}
 }
+\value{
+Standard deviation of the input
+}
 \description{
 Return the standard deviation of `x`. If no observations, return `NA`. This is a workaround for the fact that in data.table, `:= sd(x, na.rm = TRUE)` will return `NaN` where there are no observations
+}
+\examples{
+sd_na(c(1,2,3,NA)) ## 1
 }

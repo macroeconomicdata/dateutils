@@ -11,6 +11,14 @@ to_ts(x, dates)
 
 \item{dates}{dates}
 }
+\value{
+data in ts() format
+}
 \description{
 transform data in 'x' corresponding to dates in 'dates' to ts() format
+}
+\examples{
+x <- c(1,2,3,4)
+dates <- as.Date(c("2020-1-1","2020-2-1","2020-3-1","2020-4-1"))
+to_ts(x, dates) 
 }

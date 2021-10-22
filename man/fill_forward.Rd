@@ -9,6 +9,12 @@ fill_forward(x)
 \arguments{
 \item{x}{Transition matrix from a VAR model}
 }
+\value{
+x with missing obs filled by forward value
+}
 \description{
 Fill missing observations forward using the last finite observation
+}
+\examples{
+fill_forward(c(1,2,NA,NA,3,NA,5)) ## 1 2 2 2 3 3 5   
 }

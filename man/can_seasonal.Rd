@@ -9,6 +9,12 @@ can_seasonal(dates)
 \arguments{
 \item{dates}{dates}
 }
+\value{
+A logical variable indicating whether data can be seasonally adjusted
+}
 \description{
 Return a logical indicating whether data at given dates can be seasonally adjusted using seas()
+}
+\examples{
+can_seasonal(fred$ref_date[1:20]) ## TRUE
 }

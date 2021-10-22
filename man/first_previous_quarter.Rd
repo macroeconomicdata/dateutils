@@ -9,6 +9,12 @@ first_previous_quarter(date)
 \arguments{
 \item{date}{date value formated as.Date()}
 }
+\value{
+The first day of the previous quarter of the date
+}
 \description{
 Return the date of the first day of the previous quarter
+}
+\examples{
+first_previous_quarter(as.Date("2019-09-15")) ## 2019-04-01
 }

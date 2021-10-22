@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils.R
 \name{add_forecast_dates}
 \alias{add_forecast_dates}
-\title{Add NA values to the tail of a data.table}
+\title{Add NA values to the tail of a wide data.table}
 \usage{
 add_forecast_dates(
   dt,
@@ -20,6 +20,12 @@ add_forecast_dates(
 
 \item{date_name}{name of date column}
 }
+\value{
+NA-filled data.table in wide format
+}
 \description{
-Add NA values to the tail of a data.table to be filled by forecasting routines
+Add NA values to the tail of a wide data.table to be filled by forecasting routines
+}
+\examples{
+add_forecast_dates(fred[series_name == "gdp constant prices"],frq="quarter")
 }

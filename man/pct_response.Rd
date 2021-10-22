@@ -20,6 +20,14 @@ pct_response(
 
 \item{date_name}{name of column containing dates}
 }
+\value{
+The percent of responses at the frequency
+}
 \description{
 Return the percent of responses to categorical answers at a specified frequency
+}
+\examples{
+dt <- data.frame("ref_date" = seq.Date(as.Date("2000-01-01"), length.out = 100, by = "week"),
+                 "response" = c(rep("yes", 20), rep("no",50),rep("yes",30)))
+out <- pct_response(dt, col_name = "response")
 }

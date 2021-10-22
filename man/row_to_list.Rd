@@ -9,6 +9,12 @@ row_to_list(Y)
 \arguments{
 \item{Y}{matrix like data object}
 }
+\value{
+Each row as a list
+}
 \description{
 Return `Y` with each row as a list
+}
+\examples{
+row_to_list(matrix(rnorm(20),10,2))
 }

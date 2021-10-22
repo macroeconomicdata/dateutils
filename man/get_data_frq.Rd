@@ -11,6 +11,14 @@ get_data_frq(x = NULL, dates)
 
 \item{dates}{corresponding dates in `as.Date()` format}
 }
+\value{
+The frequency of the data
+}
 \description{
 Guess the frequency of a data series based on the pattern of missing observations
+}
+\examples{
+dates <- as.Date(c("2020-1-1", "2020-1-15", "2020-2-1", 
+                   "2020-2-15", "2020-3-1", "2020-3-15", "2020-4-1"))
+get_data_frq(c(1,NA,2,NA,3,NA,4), dates) ## "month"
 }

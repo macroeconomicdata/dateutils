@@ -15,6 +15,14 @@ run_sa(x, dates, x11 = FALSE, transfunc = c("none", "auto", "log"))
 
 \item{transfunc}{Data transformation, one of `none` for no transformation, `auto` for automatic detection, or `log` for log transformation}
 }
+\value{
+A list with `adj_fact` containing seasonal factors and `sa_final` containing seasonally adjusted data.
+}
 \description{
 Seasonaly adjust monthly or quarterly data using X-13 SEATS via seas()
+}
+\examples{
+x <- fred[series_name == "gdp constant prices", value]
+dates <- fred[series_name == "gdp constant prices", ref_date ]
+run_sa(x, dates, transfunc = "log")
 }

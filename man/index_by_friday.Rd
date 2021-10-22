@@ -17,7 +17,6 @@ Find the Friday in a given week from a sequence of Dates
 Vectors should be in as.Date() format
 }
 \examples{
-
 dates <- seq.Date(from = as.Date("2020-09-21"),
                   by = "week", length.out = 10)
 fridays <- index_by_friday(dates)

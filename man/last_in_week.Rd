@@ -9,6 +9,14 @@ last_in_week(dates)
 \arguments{
 \item{dates}{A sequence of dates in `as.Date()` format}
 }
+\value{
+Last day of each week
+}
 \description{
 Return the latest date in each week for the values in `dates`
+}
+\examples{
+dates <- seq.Date(from = as.Date("2020-09-21"),
+                  by = "day", length.out = 10)
+last_in_week(dates)
 }

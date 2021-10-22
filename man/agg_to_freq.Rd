@@ -23,6 +23,12 @@ agg_to_freq(
 
 \item{value_name}{name of value column}
 }
+\value{
+Aggregated data at specified frequency in long format
+}
 \description{
 Aggregate a data.table in long format to a specified frequency
+}
+\examples{
+out <- agg_to_freq(fred[series_name == "gdp constant prices"], frq = "year")
 }

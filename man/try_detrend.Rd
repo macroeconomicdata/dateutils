@@ -13,6 +13,12 @@ try_detrend(x, outlier_rm = TRUE, span = 0.6)
 
 \item{span}{span for the loess regression}
 }
+\value{
+Data with trends removed
+}
 \description{
 Estimate low frequency trends via loess regression and remove them. If the function errors, return x (i.e. no trend)
+}
+\examples{
+try_detrend(c(1,3,6,7,9,11,14,15,17,18))
 }

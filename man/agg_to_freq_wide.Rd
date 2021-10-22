@@ -26,6 +26,12 @@ agg_to_freq_wide(
 
 \item{dt_is_wide}{T/F, is input data `dt` in wide format}
 }
+\value{
+Aggregated data at specificed frequency in wide format
+}
 \description{
 Aggregate a data.table to a specified frequency and return wide format data
+}
+\examples{
+out <- agg_to_freq_wide(fred,frq="quarter")
 }

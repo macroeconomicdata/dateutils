@@ -2,7 +2,7 @@
 % Please edit documentation in R/seas_utils.R
 \name{seas_df_wide}
 \alias{seas_df_wide}
-\title{Seasonally adjust long format data using seas()}
+\title{Seasonally adjust wide format data using seas()}
 \usage{
 seas_df_wide(df, sa_cols, x11 = FALSE, transfunc = "none")
 }
@@ -15,6 +15,13 @@ seas_df_wide(df, sa_cols, x11 = FALSE, transfunc = "none")
 
 \item{transfunc}{Data transformation, one of `none` for no transformation, `auto` for automatic detection, or `log` for log transformation}
 }
+\value{
+A list with data.frames `sa_factors` containing seasonal factors and `values_sa` containing seasonally adjusted data.
+}
 \description{
-Seasonaly adjust multiple monthly or quarterly series in long format using X-13 SEATS via seas()
+Seasonaly adjust multiple monthly or quarterly series in wide format using X-13 SEATS via seas()
+}
+\examples{
+ 
+seas_df_wide(fred[series_name == "gdp constant prices"], sa_cols="value")
 }

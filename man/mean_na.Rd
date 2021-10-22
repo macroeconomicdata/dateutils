@@ -9,6 +9,12 @@ mean_na(x)
 \arguments{
 \item{x}{data potentially with non-finite values}
 }
+\value{
+Mean of the input
+}
 \description{
 Return the mean of `x`. If no observations, return `NA`. This is a workaround for the fact that in data.table, `:= mean(x, na.rm = TRUE)` will return `NaN` where there are no observations
+}
+\examples{
+mean_na(c(1,2,3,7,9,NA)) ## 4.4
 }

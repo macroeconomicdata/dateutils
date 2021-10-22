@@ -15,6 +15,13 @@ long_run_var(A, Q, m, p)
 
 \item{p}{Number of lags in the VAR}
 }
+\value{
+The variance matrix
+}
 \description{
 Find the long run variance of a VAR using the transition equation `A` and shocks to observations `Q`
+}
+\examples{
+long_run_var(comp_form(matrix(c(.2,.1,.1,.2,0,0,0,0), 2, 4)),
+             matrix(c(1,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0),4,4),2, 2)
 }

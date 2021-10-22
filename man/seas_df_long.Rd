@@ -29,6 +29,12 @@ seas_df_long(
 
 \item{date_var}{name of column containing dates}
 }
+\value{
+A list with data.frames `sa_factors` containing seasonal factors and `values_sa` containing seasonally adjusted data.
+}
 \description{
 Seasonaly adjust multiple monthly or quarterly series in long format using X-13 SEATS via seas()
+}
+\examples{
+seas_df_long(fred[series_name == "gdp constant prices"], sa_names="value")
 }

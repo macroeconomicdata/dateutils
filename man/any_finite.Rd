@@ -9,6 +9,14 @@ any_finite(Y)
 \arguments{
 \item{Y}{matrix like data object}
 }
+\value{
+Indexes of rows with at least one finite value
+}
 \description{
 Return indexes of rows with at least one finite value
+}
+\examples{
+X <- matrix(1,10,2)
+X[3,] <- NA
+any_finite(X)
 }

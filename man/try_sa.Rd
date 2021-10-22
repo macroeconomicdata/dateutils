@@ -17,6 +17,15 @@ try_sa(x, dates, x11 = FALSE, transfunc = "none", series_name = NULL)
 
 \item{series_name}{Include series name to print out if failure (for lapply() applications)}
 }
+\value{
+A list with `adj_fact` containing seasonal factors and `sa_final` containing seasonally adjusted data. 
+If seasonal adjsutment failed `adj_fact` will contain zeros and `sa_final` will contain the original data.
+}
 \description{
 Seasonaly adjust monthly or quarterly data using X-13 SEATS via seas()
+}
+\examples{
+x <- fred[series_name == "gdp constant prices", value]
+dates <- fred[series_name == "gdp constant prices", ref_date ]
+try_sa(x, dates, transfunc = "log")
 }

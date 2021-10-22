@@ -11,6 +11,12 @@ match_index(this, that)
 
 \item{that}{second object}
 }
+\value{
+A list of indexes indicating the elements that are matched to each other
+}
 \description{
 Match index values of this to that
+}
+\examples{
+match_index(c(1,2,3),c(2,3,4)) ## $that_idx: 1 2; $this_idx: 2 3
 }

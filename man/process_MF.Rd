@@ -42,11 +42,7 @@ process_MF(
 \item{return_dt}{T/F, should the function return a `data.table`? IF FALSE the function will return matrix data.}
 }
 \value{
-Right hand side data will always include observations contemporaneous with LHS data. Use `RHS_lags` to add lags
-of RHS data to the output, and `LHS_lags` to add lags of LHS data to the output. By default the function will return
-data in long format designed to be used with the `dateutils` function `process()`. Specifying `return_dt = FALSE` will 
-return LHS variables in the matrix `Y`, RHS variables in the matrix `X`, and corresponding dates (by index) in the
-date vector `dates`.
+data.table in long format (unless `return_dt = FALSE`). Variables ending in '0' are contemporaneous, ending in '1' are at one lag, '2' at two lags, etc.
 }
 \description{
 Process mixed frequency data for nowcasting applications by identifying the
@@ -55,6 +51,13 @@ of missing observations in the historical data prior to aggregation. This allows
 the incorporation of all available information into the model while still using 
 uniform frequency models to actually generate predictions, and can thus be applied
 to a wide array of econometrics and machine learning applications.
+}
+\details{
+Right hand side data will always include observations contemporaneous with LHS data. Use `RHS_lags` to add lags
+of RHS data to the output, and `LHS_lags` to add lags of LHS data to the output. By default the function will return
+data in long format designed to be used with the `dateutils` function `process()`. Specifying `return_dt = FALSE` will 
+return LHS variables in the matrix `Y`, RHS variables in the matrix `X`, and corresponding dates (by index) in the
+date vector `dates`.
 }
 \examples{
  

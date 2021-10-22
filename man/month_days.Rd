@@ -11,6 +11,14 @@ month_days(year, month)
 
 \item{month}{integer month value}
 }
+\value{
+The number of days in the month (integer)
+}
 \description{
 Get the number of days in a month given the year and month
+}
+\examples{
+month_days(2021,9) ## 30
+
+month_days(2020,2) ## 29
 }

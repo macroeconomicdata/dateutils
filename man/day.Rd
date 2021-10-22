@@ -9,6 +9,12 @@ day(date)
 \arguments{
 \item{date}{date value formated as.Date()}
 }
+\value{
+the day of the date (integer)
+}
 \description{
 Return the day of a Date value as an integer
+}
+\examples{
+day(as.Date("2019-09-15")) ## 15
 }

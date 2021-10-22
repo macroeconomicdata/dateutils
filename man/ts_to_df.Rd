@@ -4,11 +4,20 @@
 \alias{ts_to_df}
 \title{ts() data to a dataframe}
 \usage{
-ts_to_df(x)
+ts_to_df(x, end_period = TRUE)
 }
 \arguments{
 \item{x}{ts() format data which is either monthly or quarterly}
+
+\item{end_period}{T/F, for monthly or quarterly data, should dates be indexed to the end of the period?}
+}
+\value{
+Data in dataframe format
 }
 \description{
 Transform monthly or quarterly ts() data to a dataframe
+}
+\examples{
+x <- ts(c(1,2,3,4), start=c(2020,1), end=c(2020,4), frequency=4) 
+ts_to_df(x)
 }

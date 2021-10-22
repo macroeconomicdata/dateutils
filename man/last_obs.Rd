@@ -9,6 +9,12 @@ last_obs(x)
 \arguments{
 \item{x}{data potentially with non-finite values}
 }
+\value{
+The last finite observation
+}
 \description{
 Return the last finite observation of `x`
+}
+\examples{
+last_obs(c(NA,1,2,3,NA,5,NA,7,NA,NA)) ## 7
 }

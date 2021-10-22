@@ -11,6 +11,12 @@ limit_character(x, limit = 100)
 
 \item{limit}{maximum number of characters to return}
 }
+\value{
+Character values within the limit
+}
 \description{
 limit the number of characters in a string and remove spacial characters (will not drop numbers)
+}
+\examples{
+limit_character("a\%b+&cd!efghij",limit = 3)  ## "abc"
 }

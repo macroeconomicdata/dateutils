@@ -9,6 +9,12 @@ end_of_year(dates)
 \arguments{
 \item{dates}{Transition matrix from a VAR model}
 }
+\value{
+The last day of the year for the dates
+}
 \description{
 Find the end of year for a vector of dates
+}
+\examples{
+end_of_year(as.Date("2019-09-15")) ## 2019-12-31
 }

@@ -35,6 +35,12 @@ is required for data aggregated using `process_MF()`, as lags of LHS and RHS dat
 \item{silent}{T/F, supress warnings?}
 }
 \value{
+data.table of processed data
+}
+\description{
+Process data in wide format for time series modeling
+}
+\details{
 `process_wide()` can be used to transform wide data to insure stationarity. Censoring by pub_date requires long format. Directions
 for processing each file come from the data.table `lib`. This table must include the columns `series_name`, `take_logs`,
 and `take_diffs`. Unique series may also be identified by a combination of `country` and `series_name`. Optional columns
@@ -43,9 +49,6 @@ include `needs_SA` for series that need seasonal adjustment, `detrend` for remov
 argument to `process_wide()` of `detrend`, `center`, or `scale` is `FALSE`, the operation will not be performed. If `TRUE`,
 the function will check for the column of the same name in `lib`. If the column exists, T/F entries from this column are used
 to determine which series to transform. If the column does not exist, all series will be transformed.
-}
-\description{
-Process data in wide format for time series modeling
 }
 \examples{
 LHS <- fred[series_name == "gdp constant prices"]

@@ -12,7 +12,7 @@ test_that("agg_to_freq works as expected", {
   dt <- rbind(dt1,dt2)
   out <- agg_to_freq(dt)
   expect(NROW(out) == 36, "Monthly aggregation did not run as expected")
-  expect(all(out$ref_date%in%end_of_month(out$ref_date)), "Monthly dates are not end of month")
+  expect(all(out$ref_date%in%end_of_period(out$ref_date)), "Monthly dates are not end of month")
 })
 
 test_that("stack_obs functions correctly", {

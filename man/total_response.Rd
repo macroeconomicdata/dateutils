@@ -4,7 +4,12 @@
 \alias{total_response}
 \title{Number of of responses at a given frequency}
 \usage{
-total_response(dt, col_name = NULL, by = "month", date_name = "ref_date")
+total_response(
+  dt,
+  col_name = NULL,
+  by = c("month", "quarter", "week"),
+  date_name = "ref_date"
+)
 }
 \arguments{
 \item{dt}{data table of responses}
@@ -15,6 +20,14 @@ total_response(dt, col_name = NULL, by = "month", date_name = "ref_date")
 
 \item{date_name}{name of column containing dates}
 }
+\value{
+The number of responses at the frequency
+}
 \description{
 Return the total number of responses to categorical answers at a specified frequency
+}
+\examples{
+dt <- data.frame("ref_date" = seq.Date(as.Date("2000-01-01"), length.out = 100, by = "week"),
+                 "response" = c(rep("yes", 20), rep("no",50),rep("yes",30)))
+out <- total_response(dt, col_name = "response")
 }

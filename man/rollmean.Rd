@@ -11,6 +11,12 @@ rollmean(x, n)
 
 \item{n}{span of rolling mean}
 }
+\value{
+Rolling mean of the input
+}
 \description{
 Take the rolling mean of `x` over `n` elements
+}
+\examples{
+rollmean(c(1,2,3),2) ## NA, 1.5, 2.5 
 }

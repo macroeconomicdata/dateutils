@@ -11,7 +11,15 @@ stack_obs(Dat, p)
 
 \item{p}{number of lags, integer value}
 }
+\value{
+stacked time series obs with p lags
+}
 \description{
 Stack time series observations in VAR format over
 series for p lags
+}
+\examples{
+mat <- matrix(rnorm(100),50,2)
+Z <- stack_obs(mat, 2) ## stack the dataset `mat` with two lags 
+## Note: one "lag" will just return the original dataset.
 }

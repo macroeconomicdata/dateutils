@@ -11,6 +11,13 @@ pct_chng(y, lag = 1)
 
 \item{lag}{number of periods for percent change}
 }
+\value{
+The percentage change among the lag period
+}
 \description{
 Calculate the percent change in `y` from one period to the next
+}
+\examples{
+ 
+pct_chng(c(100,50,100,20,100,110))
 }

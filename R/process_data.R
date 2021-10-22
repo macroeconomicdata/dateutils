@@ -63,6 +63,12 @@ cast_LHS <- function(lags, LHS, frq){
 #' the incorporation of all available information into the model while still using 
 #' uniform frequency models to actually generate predictions, and can thus be applied
 #' to a wide array of econometrics and machine learning applications.
+#' 
+#' Right hand side data will always include observations contemporaneous with LHS data. Use `RHS_lags` to add lags
+#' of RHS data to the output, and `LHS_lags` to add lags of LHS data to the output. By default the function will return
+#' data in long format designed to be used with the `dateutils` function `process()`. Specifying `return_dt = FALSE` will 
+#' return LHS variables in the matrix `Y`, RHS variables in the matrix `X`, and corresponding dates (by index) in the
+#' date vector `dates`.
 #'
 #' @param LHS Left hand side data in long format. May include multiple LHS variables, but LHS variance MUST have the same frequency.
 #' @param RHS Right hand side data in long format at any frequency.
@@ -75,11 +81,8 @@ cast_LHS <- function(lags, LHS, frq){
 #' @param value_name Name of value column in the data.
 #' @param pub_date_name Name of publication date in the data.
 #' @param return_dt T/F, should the function return a `data.table`? IF FALSE the function will return matrix data.  
-#' @return Right hand side data will always include observations contemporaneous with LHS data. Use `RHS_lags` to add lags
-#' of RHS data to the output, and `LHS_lags` to add lags of LHS data to the output. By default the function will return
-#' data in long format designed to be used with the `dateutils` function `process()`. Specifying `return_dt = FALSE` will 
-#' return LHS variables in the matrix `Y`, RHS variables in the matrix `X`, and corresponding dates (by index) in the
-#' date vector `dates`.
+#' @return data.table in long format (unless `return_dt = FALSE`). Variables ending in '0' are contemporaneous, ending in '1' are at one lag, '2' at two lags, etc.
+#' 
 #' @examples  
 #' LHS <- fred[series_name == "gdp constant prices"]
 #' RHS <- fred[series_name != "gdp constant prices"]
@@ -166,7 +169,16 @@ process_MF <- function(LHS, RHS, LHS_lags = 1, RHS_lags = 1, as_of = NULL, frq =
 
 #' Process Data
 #' 
-#' Process data in long format for time series modeling
+#' Process data to ensure stationarity in long format for time series modeling
+#' 
+#' Process data can be used to transform data to insure stationarity and to censor data for backtesting. Directions
+#' for processing each file come from the data.table `lib`. This table must include the columns `series_name`, `take_logs`,
+#' and `take_diffs`. Unique series may also be identified by a combination of `country` and `series_name`. Optional columns
+#' include `needs_SA` for series that need seasonal adjustment, `detrend` for removing low frequency trends (nowcasting only;
+#' detrend should not be used for long horizon forecasts), `center` to de-mean the data, and `scale` to scale the data. If the 
+#' argument to `process_wide()` of `detrend`, `center`, or `scale` is `FALSE`, the operation will not be performed. If `TRUE`,
+#' the function will check for the column of the same name in `lib`. If the column exists, T/F entries from this column are used
+#' to determine which series to transform. If the column does not exist, all series will be transformed. 
 #' 
 #' @param dt Data in long format.
 #' @param lib Library with instructions regarding how to process data; see details.
@@ -182,14 +194,8 @@ process_MF <- function(LHS, RHS, LHS_lags = 1, RHS_lags = 1, as_of = NULL, frq =
 #' is required for data aggregated using `process_MF()`, as lags of LHS and RHS data are tagged 0 for contemporaneous data, 
 #' 1 for one lag, 2 for 2 lags, etc. Ignoring these tags insures processing from `lib` is correctly identified.
 #' @param silent T/F, supress warnings?
-#' @return Process data can be used to transform data to insure stationarity and to censor data for backtesting. Directions
-#' for processing each file come from the data.table `lib`. This table must include the columns `series_name`, `take_logs`,
-#' and `take_diffs`. Unique series may also be identified by a combination of `country` and `series_name`. Optional columns
-#' include `needs_SA` for series that need seasonal adjustment, `detrend` for removing low frequency trends (nowcasting only;
-#' detrend should not be used for long horizon forecasts), `center` to de-mean the data, and `scale` to scale the data. If the 
-#' argument to `process_wide()` of `detrend`, `center`, or `scale` is `FALSE`, the operation will not be performed. If `TRUE`,
-#' the function will check for the column of the same name in `lib`. If the column exists, T/F entries from this column are used
-#' to determine which series to transform. If the column does not exist, all series will be transformed. 
+#' @return data.table of processed values in long format.
+
 #'@examples
 #' dt <- process(fred, fredlib)
 #' 
@@ -401,6 +407,15 @@ process <- function(dt, lib, detrend = TRUE, center = TRUE, scale = TRUE, as_of 
 #' 
 #' Process data in wide format for time series modeling
 #' 
+#' `process_wide()` can be used to transform wide data to insure stationarity. Censoring by pub_date requires long format. Directions
+#' for processing each file come from the data.table `lib`. This table must include the columns `series_name`, `take_logs`,
+#' and `take_diffs`. Unique series may also be identified by a combination of `country` and `series_name`. Optional columns
+#' include `needs_SA` for series that need seasonal adjustment, `detrend` for removing low frequency trends (nowcasting only;
+#' `detrend` should not be used for long horizon forecasts), `center` to de-mean the data, and `scale` to scale the data. If the 
+#' argument to `process_wide()` of `detrend`, `center`, or `scale` is `FALSE`, the operation will not be performed. If `TRUE`,
+#' the function will check for the column of the same name in `lib`. If the column exists, T/F entries from this column are used
+#' to determine which series to transform. If the column does not exist, all series will be transformed. 
+#' 
 #' @param dt_wide Data in wide format.
 #' @param lib Library with instructions regarding how to process data; see details.
 #' @param detrend T/F should data be detrended (see details)?
@@ -411,14 +426,8 @@ process <- function(dt, lib, detrend = TRUE, center = TRUE, scale = TRUE, as_of 
 #' is required for data aggregated using `process_MF()`, as lags of LHS and RHS data are tagged 0 for contemporaneous data, 
 #' 1 for one lag, 2 for 2 lags, etc. Ignoring these tags insures processing from `lib` is correctly identified.
 #' @param silent T/F, supress warnings?
-#' @return `process_wide()` can be used to transform wide data to insure stationarity. Censoring by pub_date requires long format. Directions
-#' for processing each file come from the data.table `lib`. This table must include the columns `series_name`, `take_logs`,
-#' and `take_diffs`. Unique series may also be identified by a combination of `country` and `series_name`. Optional columns
-#' include `needs_SA` for series that need seasonal adjustment, `detrend` for removing low frequency trends (nowcasting only;
-#' `detrend` should not be used for long horizon forecasts), `center` to de-mean the data, and `scale` to scale the data. If the 
-#' argument to `process_wide()` of `detrend`, `center`, or `scale` is `FALSE`, the operation will not be performed. If `TRUE`,
-#' the function will check for the column of the same name in `lib`. If the column exists, T/F entries from this column are used
-#' to determine which series to transform. If the column does not exist, all series will be transformed. 
+#' @return data.table of processed data
+#' 
 #'@examples
 #' LHS <- fred[series_name == "gdp constant prices"]
 #' RHS <- fred[series_name != "gdp constant prices"]

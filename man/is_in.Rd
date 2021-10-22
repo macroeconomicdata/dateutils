@@ -11,6 +11,14 @@ is_in(that, this_in)
 
 \item{this_in}{second object}
 }
+\value{
+Logical variables indicating whether the element exists in both objects
+}
 \description{
 Find element of this_in that, ie `this_in%in%that`
+}
+\examples{
+that <- seq.Date(from = as.Date("2020-09-15"), by = "day", length.out = 10)
+this_in <- seq.Date(from = as.Date("2020-09-11"), by = "day", length.out = 10)
+is_in(that, this_in)
 }

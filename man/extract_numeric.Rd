@@ -9,6 +9,12 @@ extract_numeric(x)
 \arguments{
 \item{x}{object containing numeric (and other) values}
 }
+\value{
+Numeric values from the object
+}
 \description{
 Extract numeric values from x
+}
+\examples{
+extract_numeric(c("7+5", "abc123")) ## c(75, 123)
 }
