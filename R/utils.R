@@ -7,7 +7,7 @@
 #' 
 #' @examples 
 #' extract_numeric(c("7+5", "abc123")) ## c(75, 123)
-extract_numeric <- function(x) as.numeric(gsub("[^0-9.-]+", "", as.character(x)))
+extract_numeric <- function(x) as.numeric(gsub("[^0-9.]", "", as.character(x)))
 
 #' Extract character values
 #'
