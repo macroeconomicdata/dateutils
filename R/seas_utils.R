@@ -171,7 +171,7 @@ run_sa <- function(x, dates, x11 = FALSE, transfunc = c("none", "auto", "log")){
     }
   }
   sa_final <- match_ts_dates(x_ts, final(sa))
-  sa_final[!is.finite(x_ts)] <- NA
+  # sa_final[!is.finite(x_ts)] <- NA # use this to exclude forecasts in output
   return(list(adj_fact = unclass(adj_fact),
               sa_final = unclass(sa_final)))
 }
