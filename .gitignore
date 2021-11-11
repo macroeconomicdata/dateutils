@@ -9,3 +9,4 @@ src/Rbackend.dll
 src-i386/
 src-x64/
 LICENSE
+.idea/misc.xml
