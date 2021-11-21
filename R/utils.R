@@ -556,5 +556,51 @@ get_data_frq <- function(x = NULL, dates){
   }
 }
 
+MtoDate <- function(x){
+  if(substr(x,1,3) == "jan") return("01-31")
+  if(substr(x,1,3) == "feb") return("02-28")
+  if(substr(x,1,3) == "mar") return("03-31")
+  if(substr(x,1,3) == "apr") return("04-30")
+  if(substr(x,1,3) == "may") return("05-31")
+  if(substr(x,1,3) == "jun") return("06-30")
+  if(substr(x,1,3) == "jul") return("07-30")
+  if(substr(x,1,3) == "aug") return("08-31")
+  if(substr(x,1,3) == "sep") return("09-30")
+  if(substr(x,1,3) == "oct") return("10-31")
+  if(substr(x,1,3) == "nov") return("11-30")
+  if(substr(x,1,3) == "dec") return("12-31")
+}
+
+to_Mdate <- function(x){
+  year <- extract_numeric(x)
+  month <- MtoDate(extract_basic_character(x))
+  if(is.na(year)){
+    return(month)
+  }else{
+    out <- paste(year,month,sep="-")
+    return(out)
+  }
+}
+
+#' Get numeric month from string
+#'
+#' Get the numeric month value from string value months
+#'
+#' @param x String vector of months, possibly including years
+#' @return If years are included, ebnd of month dates as.Date(). If years
+#'         are omitted, numeric month-day values. Returns end of month date.
+#' 
+#' @examples 
+#' dates <- month_to_date(c("January 2014", "February 2014", "March 2014"))
+month_to_date <- function(x){
+  out <- lapply(x, FUN = to_Mdate)
+  out <- do.call("c", out)
+  if(all(sapply(out, nchar) == 10)){
+    return(as.Date(out))
+  }else{
+    return(out)
+  }
+}
+
 
 
