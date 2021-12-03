@@ -1,7 +1,7 @@
 Package: dateutils
 Type: Package
 Title: Date Utils
-Version: 0.1.4
+Version: 0.1.5
 Authors@R: c(person("Seth", "Leonard", role = c("aut", "cre"),
                      email = "seth@ottoquant.com"),
               person("Jiancong", "Liu", role = "ctb",
