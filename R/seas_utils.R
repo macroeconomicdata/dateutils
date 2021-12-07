@@ -327,7 +327,7 @@ spline_fill <- function(x){
 #' 
 #' @examples 
 #' try_trend(c(1,3,6,7,9,11,14,15,17,18))
-try_trend <- function(x, outlier_rm = TRUE, span = 0.6){
+try_trend <- function(x, outlier_rm = TRUE, span = 1){
   trend <- try(loess(x ~ seq(length(x)), na.action = na.exclude, span = span))
   if(inherits(trend, "try-error")) return(rep(0,length(x)))
   if(outlier_rm){
@@ -342,6 +342,32 @@ try_trend <- function(x, outlier_rm = TRUE, span = 0.6){
   return(spline_fill_trend(predict(trend)))
 }
 
+
+#' Remove outliers
+#' 
+#' Identify outliers as deviations from trend and remove them
+#' 
+#' @param x data 
+#' @param z cutoff value; outliers have absolute value greater than z*(s.d.)
+#' @param span span for the loess regression to estimate trend
+#' @return data with outliers dropped
+#' 
+#' @examples 
+#' try_rm_out(c(1,3,6,7,9,11,104,15,17,18))
+try_rm_outlier <- function(x, z = 3, span = .6){
+  trend <- try(loess(x ~ seq(length(x)), na.action = na.exclude, span = span))
+  if(inherits(trend, "try-error")) return(rep(0,length(x)))
+  for(j in seq(3)){
+    trend <- predict(trend)
+    vnce <- mean((x-trend)^2, na.rm = T)
+    x[abs(x-trend) > z*sqrt(vnce)] <- NA
+    trend <- try(loess(x ~ seq(length(x)), na.action = na.exclude, span = span))
+    if(inherits(trend, "try-error")) return(x)
+  }
+  return(x)
+}
+
+
 #' Remove low frequency trends from data
 #' 
 #' Estimate low frequency trends via loess regression and remove them. If the function errors, return x (i.e. no trend)
@@ -353,7 +379,7 @@ try_trend <- function(x, outlier_rm = TRUE, span = 0.6){
 #' 
 #' @examples
 #' try_detrend(c(1,3,6,7,9,11,14,15,17,18))
-try_detrend <- function(x, outlier_rm = TRUE, span = 0.6){
+try_detrend <- function(x, outlier_rm = TRUE, span = 1){
   x_in <- x
   trend <- try(loess(x ~ seq(length(x)), na.action = na.exclude, span = span))
   if(inherits(trend, "try-error")) return(x_in)
